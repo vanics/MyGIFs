@@ -7,7 +7,7 @@ target 'MyGIFs' do
 
   # Pods for MyGIFs
   pod 'Alamofire', '~> 4.5'
-  pod 'ObjectMapper', '~> 3.1'
+  pod 'AlamofireObjectMapper', '~> 5.0'
   pod 'SwiftyGif'
   pod 'RxSwift',    '~> 4.0'
   pod 'RxCocoa',    '~> 4.0'
