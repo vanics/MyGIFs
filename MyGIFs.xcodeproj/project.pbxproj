@@ -13,6 +13,7 @@
 		20F1EBCE2019458D00C54341 /* MyGIFs.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EBCC2019458D00C54341 /* MyGIFs.xcdatamodeld */; };
 		20F1EBD02019458D00C54341 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20F1EBCF2019458D00C54341 /* Assets.xcassets */; };
 		20F1EBD32019458D00C54341 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20F1EBD12019458D00C54341 /* LaunchScreen.storyboard */; };
+		20F1EBE320195E2800C54341 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EBE220195E2800C54341 /* Constants.swift */; };
 		58DBB20FFB711387B19F6049 /* Pods_MyGIFs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7419CD5DE27CD0E2DDDC87FE /* Pods_MyGIFs.framework */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 		20F1EBCF2019458D00C54341 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		20F1EBD22019458D00C54341 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		20F1EBD42019458D00C54341 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20F1EBE220195E2800C54341 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		7419CD5DE27CD0E2DDDC87FE /* Pods_MyGIFs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MyGIFs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -63,15 +65,89 @@
 		20F1EBC42019458C00C54341 /* MyGIFs */ = {
 			isa = PBXGroup;
 			children = (
-				20F1EBC52019458C00C54341 /* AppDelegate.swift */,
-				20F1EBC72019458C00C54341 /* ViewController.swift */,
-				20F1EBC92019458D00C54341 /* Main.storyboard */,
+				20F1EBE620195ED400C54341 /* Networking+Services */,
+				20F1EBDB20195D8B00C54341 /* Models */,
+				20F1EBE420195EAA00C54341 /* View Models */,
+				20F1EBDA20195D8500C54341 /* Controllers */,
+				20F1EBDC20195D9000C54341 /* Views */,
+				20F1EBE020195DCB00C54341 /* Layout */,
+				20F1EBE520195EC400C54341 /* Util+Helpers */,
+				20F1EBDD20195D9E00C54341 /* Extensions+Protocols */,
 				20F1EBCF2019458D00C54341 /* Assets.xcassets */,
-				20F1EBD12019458D00C54341 /* LaunchScreen.storyboard */,
-				20F1EBD42019458D00C54341 /* Info.plist */,
+				20F1EBE120195DDD00C54341 /* Supporting Files */,
 				20F1EBCC2019458D00C54341 /* MyGIFs.xcdatamodeld */,
 			);
 			path = MyGIFs;
+			sourceTree = "<group>";
+		};
+		20F1EBDA20195D8500C54341 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				20F1EBC72019458C00C54341 /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		20F1EBDB20195D8B00C54341 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		20F1EBDC20195D9000C54341 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Views;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		20F1EBDD20195D9E00C54341 /* Extensions+Protocols */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Extensions+Protocols";
+			sourceTree = "<group>";
+		};
+		20F1EBE020195DCB00C54341 /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				20F1EBC92019458D00C54341 /* Main.storyboard */,
+				20F1EBD12019458D00C54341 /* LaunchScreen.storyboard */,
+			);
+			path = Layout;
+			sourceTree = "<group>";
+		};
+		20F1EBE120195DDD00C54341 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				20F1EBC52019458C00C54341 /* AppDelegate.swift */,
+				20F1EBE220195E2800C54341 /* Constants.swift */,
+				20F1EBD42019458D00C54341 /* Info.plist */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		20F1EBE420195EAA00C54341 /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "View Models";
+			sourceTree = "<group>";
+		};
+		20F1EBE520195EC400C54341 /* Util+Helpers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Util+Helpers";
+			sourceTree = "<group>";
+		};
+		20F1EBE620195ED400C54341 /* Networking+Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Networking+Services";
 			sourceTree = "<group>";
 		};
 		69A729503414FE7AB45F5A9D /* Pods */ = {
@@ -233,6 +309,7 @@
 				20F1EBC82019458C00C54341 /* ViewController.swift in Sources */,
 				20F1EBC62019458C00C54341 /* AppDelegate.swift in Sources */,
 				20F1EBCE2019458D00C54341 /* MyGIFs.xcdatamodeld in Sources */,
+				20F1EBE320195E2800C54341 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
