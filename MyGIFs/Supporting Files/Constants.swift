@@ -9,7 +9,11 @@
 import Foundation
 
 enum API {
-    static let GiphyBaseURL = ""
-    // Giphy Key Token
-    static let Token = "X3mqhDeyN6Y5hV2tLToHzsCe5356DNmq"
+    
+    enum Giphy {
+        // Giphy Key Token
+        static let APIToken = "X3mqhDeyN6Y5hV2tLToHzsCe5356DNmq"
+        static let limitPerRequest = 15
+    }
+    
 }
