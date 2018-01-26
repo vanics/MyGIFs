@@ -16,9 +16,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        // Some UI Changes
+        // Global UI Changes
         UIApplication.shared.statusBarStyle = .lightContent
 
+        // Depedency injection to pass the NSManagedObjectContext
+        // The messy way would be to direclty call appDelegate.persistentContainer.viewContext
+        // Other possibility would be Singleton
+        // let tabBarController = window!.rootViewController as! UITabBarController
+        MyGifsCoreData.shared.managedContext = persistentContainer.viewContext
+            
+        // Temporary UI Definition
+        UITabBar.appearance().tintColor = UIColor.white
+        UITabBar.appearance().barTintColor = UIColor.black
+        
         return true
     }
 

@@ -13,24 +13,40 @@ import ObjectMapper
 struct GifSize: Mappable {
     
     var url: String!
-    var width: String!
-    var height: String!
-    var size: String?
+    var width: Float?
+    var height: Float?
+    var size: Float?
     
     // MARK: JSON
     init?(map: Map) { }
     
     mutating func mapping(map: Map) {
         url <- map["url"]
-        width <- map["width"]
-        height <- map["height"]
-        size <- map["size"]
+        width <- (map["width"], transform)
+        height <- (map["height"], transform)
+        size <- (map["size"], transform)
     }
     
     func heightForWidth(_ targetWidth: CGFloat) -> CGFloat {
-        let scaleFactor  = targetWidth / CGFloat(Float(width)!)
-        let newHeight  = CGFloat(Float(height)!) * scaleFactor
-        return newHeight
+        return Calculation.heightForWidth(
+            targetWidth,
+            originalWidth: width!,
+            originalHeight: height!
+        )
     }
 }
+
+fileprivate let transform = TransformOf<Float, String>(fromJSON: { (value) in
+    
+    if let value = value {
+        return Float(value)
+    }
+    
+    return nil
+}, toJSON: { value in
+    if let value = value {
+        return String(value)
+    }
+    return nil
+})
 

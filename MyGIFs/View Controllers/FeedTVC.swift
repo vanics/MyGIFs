@@ -25,6 +25,10 @@ class FeedTVC: UITableViewController {
     let disposeBag = DisposeBag()
     private var largeGifSelectionIndexPath: IndexPath?
     
+    let temporaryCDContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    var indexOfCurrentContentPage = 1
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -90,6 +94,10 @@ class FeedTVC: UITableViewController {
         return cell
     }
     
+    func coreData() {
+        
+    }
+    
     // MARK: - Image Caching and Related
     
     func setupImageCaching() {
@@ -135,10 +143,30 @@ class FeedTVC: UITableViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
+    
+    // MARK: - UIScrollView / Infinite Scrolling
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // Where the user is in the y-axis
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let contentRemainder = contentHeight - scrollView.frame.size.height
+        
+        if offsetY > contentRemainder {
+            indexOfCurrentContentPage += 1
+            
+            // Load more data
+        }
+    }
 }
 
 extension FeedTVC: FeedActionsDelegate {
+    func addFavorite(item: Gif, imageData: Data) {
+        MyGifsCoreData.shared.saveNewItem(item, imageData: imageData)
+    }
     
+    func removeFavorite(item: Gif) {
+        
+    }
 }
 
 extension FeedTVC: UISearchResultsUpdating {
@@ -152,12 +180,14 @@ extension FeedTVC: UISearchResultsUpdating {
     // Setup the Search Controller
     private func setupSearchController() {
         //navigationController?.hidesBarsOnSwipe = true
-
         searchController.searchResultsUpdater = self
         searchController.searchBar.placeholder = "Search GIFs"
+        searchController.searchBar.barStyle = .black
         searchController.searchBar.tintColor = .white
+
         searchController.obscuresBackgroundDuringPresentation = false
-        
+        searchController.hidesNavigationBarDuringPresentation = true // By Default
+
         // We can't do it with Interface Builder
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchController

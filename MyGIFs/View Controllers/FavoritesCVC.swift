@@ -7,12 +7,25 @@
 //
 
 import UIKit
+import CoreData
+import SwiftyGif
 
-private let reuseIdentifier = "Cell"
+fileprivate enum Identifiers {
+    static let FavoriteCVCell = "FavoriteCVCell"
+}
 
 class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
 
     @IBOutlet weak var collectionView: UICollectionView!
+    
+    // Allow quite some memory, but is either memory or CPU
+    // https://github.com/kirualex/SwiftyGif#benchmark
+    let gifManager = SwiftyGifManager(memoryLimit: 200)
+    let levelOfIntegrity = 0.5
+    
+    // TODO: Manage it better in the VC Life Cycle
+    
+    private var gifs: [LocalGif] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,10 +37,28 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
         // self.clearsSelectionOnViewWillAppear = false
 
         // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        // Two ways of doing it.
         
-        // Do any additional setup after loading the view.
+        self.collectionView!.register(UINib(nibName: Identifiers.FavoriteCVCell, bundle: nil), forCellWithReuseIdentifier: Identifiers.FavoriteCVCell)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let appDelegate =
+            UIApplication.shared.delegate as? AppDelegate else {
+                return
+        }
+
+        let managedContext = appDelegate.persistentContainer.viewContext
+
+        let fetchRequest =
+            NSFetchRequest<LocalGif>(entityName: "LocalGif")
+        
+        do {
+            gifs = try managedContext.fetch(fetchRequest)
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
     }
 
     /*
@@ -43,25 +74,38 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     // MARK: UICollectionViewDataSource
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
+        return gifs.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-    
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Identifiers.FavoriteCVCell, for: indexPath) as! FavoriteCVCell
+        
         // Configure the cell
-    
+        cell.localGif = gifs[indexPath.row]
+        
         return cell
     }
 
     // MARK: UICollectionViewDelegate
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let localGif = gifs[indexPath.row]
+        
+        // Hardcoded for now
+        let predefinedCellBorder: CGFloat = 10
+        
+        let numberOfCellPerRow: CGFloat = 2
+        let widthForCell = (collectionView.bounds.size.width / numberOfCellPerRow) - predefinedCellBorder
+        
+        let heightForCell = Calculation.heightForWidth(widthForCell, originalWidth: localGif.localImageWidth, originalHeight: localGif.localImageHeight)
+
+        return CGSize(width: widthForCell+predefinedCellBorder, height: heightForCell+predefinedCellBorder)
+    }
 
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
@@ -92,4 +136,10 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     }
     */
 
+}
+
+extension FavoritesCVC: FavoriteActionsDelegate {
+    func deleteFavorite(_ object: LocalGif) {
+        MyGifsCoreData.shared.deleteByObject(object)
+    }
 }
