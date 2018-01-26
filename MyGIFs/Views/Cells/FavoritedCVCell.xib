@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="EOs-OF-wkg" customClass="FavoriteCVCell" customModule="MyGIFs" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="165" height="192"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                <rect key="frame" x="0.0" y="0.0" width="165" height="192"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="v5y-Kd-Hj8">
+                        <rect key="frame" x="5" y="5" width="155" height="182"/>
+                    </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hfm-76-lp9">
+                        <rect key="frame" x="104" y="5" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="iaW-Qx-Blj"/>
+                            <constraint firstAttribute="width" constant="40" id="jb5-Va-8aJ"/>
+                        </constraints>
+                        <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <state key="normal" image="FavoritesFillIcon"/>
+                        <connections>
+                            <action selector="favoriteBtnDidTouch:" destination="EOs-OF-wkg" eventType="touchUpInside" id="0pD-Lq-t2V"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="hfm-76-lp9" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="topMargin" constant="5" id="NaT-fV-vnX"/>
+                <constraint firstAttribute="trailingMargin" secondItem="hfm-76-lp9" secondAttribute="trailing" constant="5" id="Qi5-bR-Zkr"/>
+                <constraint firstItem="v5y-Kd-Hj8" firstAttribute="leading" secondItem="EOs-OF-wkg" secondAttribute="leading" constant="5" id="Qkf-di-gFy"/>
+                <constraint firstAttribute="bottom" secondItem="v5y-Kd-Hj8" secondAttribute="bottom" constant="5" id="Y6Z-Ft-2zf"/>
+                <constraint firstItem="v5y-Kd-Hj8" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="top" constant="5" id="cuS-IW-aHJ"/>
+                <constraint firstAttribute="trailing" secondItem="v5y-Kd-Hj8" secondAttribute="trailing" constant="5" id="njN-Id-ca2"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="E5N-Zx-4Ky"/>
+            <connections>
+                <outlet property="gifImageView" destination="v5y-Kd-Hj8" id="o4b-3B-hbo"/>
+            </connections>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="FavoritesFillIcon" width="26" height="24"/>
+    </resources>
+</document>
