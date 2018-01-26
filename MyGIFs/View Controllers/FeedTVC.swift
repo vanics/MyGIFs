@@ -161,11 +161,16 @@ class FeedTVC: UITableViewController {
 
 extension FeedTVC: FeedActionsDelegate {
     func addFavorite(item: Gif, imageData: Data) {
-        MyGifsCoreData.shared.saveNewItem(item, imageData: imageData)
+        if let imagePath = PersistGif.shared.storeLocalImage(name: item.id, imageData: imageData) {
+            MyGifsCoreData.shared.saveNewItem(item, imagePath: imagePath)
+        }
     }
     
     func removeFavorite(item: Gif) {
-        
+        // TODO: Invert it
+        if PersistGif.shared.removeImage(name: item.id) {
+            _ = MyGifsCoreData.shared.deleteById(item.id)
+        }
     }
 }
 
