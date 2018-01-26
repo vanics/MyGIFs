@@ -48,7 +48,7 @@ class MyGifsCoreData {
         
     }
     
-    func saveNewItem(_ item: Gif, imageData: Data) {
+    func saveNewItem(_ item: Gif, imagePath: String) {
         guard let managedContext = managedContext else {
             fatalError("Managed Context not initialized")
         }

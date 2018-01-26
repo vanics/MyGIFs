@@ -24,6 +24,8 @@ class FeedTVCell: UITableViewCell {
     
     var gif: Gif? {
         didSet {
+            backgroundColor = UIColor.randomFlat
+            print(UIColor.randomFlat)
             if let imageUrl = gif?.fixedWidth?.url {
                 gifImageView?.kf.setImage(with: URL(string: imageUrl))
                 setFavoriteBtn(gif!.isFavorite)
@@ -40,8 +42,6 @@ class FeedTVCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        backgroundColor = UIColor.randomFlat
     }
     
     override func prepareForReuse() {

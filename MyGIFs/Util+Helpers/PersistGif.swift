@@ -11,7 +11,7 @@ import UIKit
 class PersistGif {
     
     // Singleton
-    let shared = PersistGif()
+    static let shared = PersistGif()
     
     private let storageFolder = GIF.storageFolder
     
@@ -60,19 +60,19 @@ class PersistGif {
         return false
     }
     
-    func storeLocalImage(name: String, imageData: Data) -> Bool {
+    func storeLocalImage(name: String, imageData: Data) -> String? {
         
         // Create filePath URL by appending final path component (name of image)
         let filePath = documentsURL.appendingPathComponent("\(name).gif")
         
         do {
             try imageData.write(to: filePath, options: .atomic)
-            return true
+            return filePath.path
         } catch {
             print("couldn't write image")
             // TODO: Treat error (Maybe, not enough space?)
         }
         
-        return false
+        return nil
     }
 }
