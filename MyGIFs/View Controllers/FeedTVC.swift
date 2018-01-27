@@ -183,6 +183,10 @@ extension FeedTVC: FeedActionsDelegate {
         }
     }
     
+    func share(imageData: Data) {
+        shareGif(imageData: imageData)
+    }
+    
     func removeFavorite(item: Gif) {
         // TODO: Invert it
         if MyGifsCoreData.shared.deleteById(item.id) {

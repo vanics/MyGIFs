@@ -12,6 +12,7 @@ import Kingfisher
 protocol FeedActionsDelegate: class {
     func addFavorite(item: Gif, imageData: Data)
     func removeFavorite(item: Gif)
+    func share(imageData: Data)
 }
 
 class FeedTVCell: UITableViewCell {    
@@ -70,6 +71,13 @@ class FeedTVCell: UITableViewCell {
     }
     
     // MARK: - Actions
+    @IBAction private func shareBtnDidTouch(_ sender: UIButton) {
+        guard let imageData = gifImageView.kf.base.image?.kf.gifRepresentation() else {
+            return
+        }
+        
+        feedActionsDelegate?.share(imageData: imageData)
+    }
     
     @IBAction private func favoriteBtnDidTouch(_ sender: UIButton) {
 

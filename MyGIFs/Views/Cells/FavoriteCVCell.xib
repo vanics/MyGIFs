@@ -24,7 +24,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="165" height="192"/>
                     </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hfm-76-lp9">
-                        <rect key="frame" x="114" y="0.0" width="40" height="35"/>
+                        <rect key="frame" x="115" y="0.0" width="40" height="35"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="35" id="iaW-Qx-Blj"/>
                             <constraint firstAttribute="width" constant="40" id="jb5-Va-8aJ"/>
@@ -36,10 +36,10 @@
                         </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cK0-I4-Uke">
-                        <rect key="frame" x="128" y="40" width="20" height="20"/>
+                        <rect key="frame" x="115" y="40" width="40" height="40"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="20" id="vjL-kv-5wK"/>
-                            <constraint firstAttribute="width" constant="20" id="z0I-GZ-5wz"/>
+                            <constraint firstAttribute="height" constant="40" id="vjL-kv-5wK"/>
+                            <constraint firstAttribute="width" constant="40" id="z0I-GZ-5wz"/>
                         </constraints>
                         <color key="tintColor" red="0.99019607840000001" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <state key="normal" image="shareIcon"/>
@@ -51,10 +51,10 @@
             </view>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="cK0-I4-Uke" secondAttribute="trailing" constant="17" id="83Y-fk-NLC"/>
+                <constraint firstAttribute="trailing" secondItem="cK0-I4-Uke" secondAttribute="trailing" constant="10" id="83Y-fk-NLC"/>
                 <constraint firstItem="hfm-76-lp9" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="topMargin" id="NaT-fV-vnX"/>
-                <constraint firstAttribute="trailingMargin" secondItem="hfm-76-lp9" secondAttribute="trailing" constant="-5" id="Qi5-bR-Zkr"/>
                 <constraint firstItem="v5y-Kd-Hj8" firstAttribute="leading" secondItem="EOs-OF-wkg" secondAttribute="leading" id="Qkf-di-gFy"/>
+                <constraint firstItem="E5N-Zx-4Ky" firstAttribute="trailing" secondItem="hfm-76-lp9" secondAttribute="trailing" constant="10" id="S72-ua-HdT"/>
                 <constraint firstAttribute="bottom" secondItem="v5y-Kd-Hj8" secondAttribute="bottom" id="Y6Z-Ft-2zf"/>
                 <constraint firstItem="v5y-Kd-Hj8" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="top" id="cuS-IW-aHJ"/>
                 <constraint firstAttribute="trailing" secondItem="v5y-Kd-Hj8" secondAttribute="trailing" id="njN-Id-ca2"/>

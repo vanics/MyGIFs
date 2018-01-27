@@ -74,12 +74,27 @@
                                                 <action selector="favoriteBtnDidTouch:" destination="3eS-Mw-wCQ" eventType="touchUpInside" id="IPe-69-035"/>
                                             </connections>
                                         </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jza-9c-AYH">
+                                            <rect key="frame" x="315" y="65" width="40" height="40"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="40" id="i6P-ZW-CTF"/>
+                                                <constraint firstAttribute="width" constant="40" id="nwe-4X-77m"/>
+                                            </constraints>
+                                            <color key="tintColor" red="0.99019607840000001" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <inset key="imageEdgeInsets" minX="1" minY="0.0" maxX="0.0" maxY="10"/>
+                                            <state key="normal" image="shareIcon"/>
+                                            <connections>
+                                                <action selector="shareBtnDidTouch:" destination="3eS-Mw-wCQ" eventType="touchUpInside" id="Npi-C2-Ikz"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="bottom" secondItem="WUd-OQ-12H" secondAttribute="bottom" id="6BP-Qp-786"/>
+                                        <constraint firstAttribute="trailing" secondItem="jza-9c-AYH" secondAttribute="trailing" constant="20" id="Bkm-8l-Raa"/>
                                         <constraint firstAttribute="trailing" secondItem="WUd-OQ-12H" secondAttribute="trailing" id="KAp-94-vZz"/>
                                         <constraint firstItem="WUd-OQ-12H" firstAttribute="leading" secondItem="8uP-Ao-uJM" secondAttribute="leading" id="RTE-Pt-uPB"/>
                                         <constraint firstItem="WUd-OQ-12H" firstAttribute="top" secondItem="8uP-Ao-uJM" secondAttribute="top" id="UvW-aT-CAP"/>
+                                        <constraint firstItem="jza-9c-AYH" firstAttribute="top" secondItem="4hY-bQ-iP7" secondAttribute="bottom" constant="5" id="etL-pI-28k"/>
                                         <constraint firstItem="4hY-bQ-iP7" firstAttribute="leading" secondItem="WUd-OQ-12H" secondAttribute="trailing" constant="-60" id="uam-Xk-838"/>
                                         <constraint firstItem="4hY-bQ-iP7" firstAttribute="top" secondItem="WUd-OQ-12H" secondAttribute="top" constant="20" id="yzV-MH-Lua"/>
                                     </constraints>
@@ -163,5 +178,6 @@
         <image name="FavoritesFillIcon" width="26" height="24"/>
         <image name="FavoritesIcon" width="26" height="24"/>
         <image name="HomeFillIcon" width="21" height="23"/>
+        <image name="shareIcon" width="25" height="25"/>
     </resources>
 </document>
