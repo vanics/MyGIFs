@@ -17,9 +17,9 @@ enum API {
 }
 
 enum GIF {
-    static let memoryLimitOnFavorites = 200 // 200 MB
+    static let memoryLimitInFavorites = 200 // 200 MB
     
     // Allow frame skipping to optimize CPU and memory usage
-    static let levelOfIntegrity: Float = 0.6 // 1 - 0.1    
+    static let levelOfIntegrityInFavorites: Float = 0.6 // 1 - 0.1
 }
 

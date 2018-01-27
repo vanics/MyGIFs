@@ -21,12 +21,12 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="v5y-Kd-Hj8">
-                        <rect key="frame" x="5" y="5" width="155" height="182"/>
+                        <rect key="frame" x="0.0" y="0.0" width="165" height="192"/>
                     </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hfm-76-lp9">
-                        <rect key="frame" x="104" y="5" width="40" height="40"/>
+                        <rect key="frame" x="114" y="0.0" width="40" height="35"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="40" id="iaW-Qx-Blj"/>
+                            <constraint firstAttribute="height" constant="35" id="iaW-Qx-Blj"/>
                             <constraint firstAttribute="width" constant="40" id="jb5-Va-8aJ"/>
                         </constraints>
                         <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -35,24 +35,42 @@
                             <action selector="favoriteBtnDidTouch:" destination="EOs-OF-wkg" eventType="touchUpInside" id="0pD-Lq-t2V"/>
                         </connections>
                     </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cK0-I4-Uke">
+                        <rect key="frame" x="128" y="40" width="20" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="vjL-kv-5wK"/>
+                            <constraint firstAttribute="width" constant="20" id="z0I-GZ-5wz"/>
+                        </constraints>
+                        <color key="tintColor" red="0.99019607840000001" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <state key="normal" image="shareIcon"/>
+                        <connections>
+                            <action selector="shareBtnDidTouch:" destination="EOs-OF-wkg" eventType="touchUpInside" id="iew-Ec-oBS"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="hfm-76-lp9" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="topMargin" constant="5" id="NaT-fV-vnX"/>
-                <constraint firstAttribute="trailingMargin" secondItem="hfm-76-lp9" secondAttribute="trailing" constant="5" id="Qi5-bR-Zkr"/>
-                <constraint firstItem="v5y-Kd-Hj8" firstAttribute="leading" secondItem="EOs-OF-wkg" secondAttribute="leading" constant="5" id="Qkf-di-gFy"/>
-                <constraint firstAttribute="bottom" secondItem="v5y-Kd-Hj8" secondAttribute="bottom" constant="5" id="Y6Z-Ft-2zf"/>
-                <constraint firstItem="v5y-Kd-Hj8" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="top" constant="5" id="cuS-IW-aHJ"/>
-                <constraint firstAttribute="trailing" secondItem="v5y-Kd-Hj8" secondAttribute="trailing" constant="5" id="njN-Id-ca2"/>
+                <constraint firstAttribute="trailing" secondItem="cK0-I4-Uke" secondAttribute="trailing" constant="17" id="83Y-fk-NLC"/>
+                <constraint firstItem="hfm-76-lp9" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="topMargin" id="NaT-fV-vnX"/>
+                <constraint firstAttribute="trailingMargin" secondItem="hfm-76-lp9" secondAttribute="trailing" constant="-5" id="Qi5-bR-Zkr"/>
+                <constraint firstItem="v5y-Kd-Hj8" firstAttribute="leading" secondItem="EOs-OF-wkg" secondAttribute="leading" id="Qkf-di-gFy"/>
+                <constraint firstAttribute="bottom" secondItem="v5y-Kd-Hj8" secondAttribute="bottom" id="Y6Z-Ft-2zf"/>
+                <constraint firstItem="v5y-Kd-Hj8" firstAttribute="top" secondItem="EOs-OF-wkg" secondAttribute="top" id="cuS-IW-aHJ"/>
+                <constraint firstAttribute="trailing" secondItem="v5y-Kd-Hj8" secondAttribute="trailing" id="njN-Id-ca2"/>
+                <constraint firstItem="cK0-I4-Uke" firstAttribute="top" secondItem="hfm-76-lp9" secondAttribute="bottom" constant="5" id="sRt-wu-tWK"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="E5N-Zx-4Ky"/>
             <connections>
+                <outlet property="favoriteBtn" destination="hfm-76-lp9" id="dsF-pw-9nG"/>
                 <outlet property="gifImageView" destination="v5y-Kd-Hj8" id="o4b-3B-hbo"/>
+                <outlet property="shareBtn" destination="cK0-I4-Uke" id="O0K-ic-LJk"/>
             </connections>
+            <point key="canvasLocation" x="34.5" y="54"/>
         </collectionViewCell>
     </objects>
     <resources>
         <image name="FavoritesFillIcon" width="26" height="24"/>
+        <image name="shareIcon" width="25" height="25"/>
     </resources>
 </document>

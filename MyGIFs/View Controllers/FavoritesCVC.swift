@@ -17,30 +17,32 @@ fileprivate enum Identifiers {
 class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, FluidLayoutDelegate {
     
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var fluidCollectionViewLayout: FluidCollectionViewLayout!
     
     // Allow quite some memory, but is either memory or CPU
     // https://github.com/kirualex/SwiftyGif#benchmark
-    let gifManager = SwiftyGifManager(memoryLimit: 200)
-    let levelOfIntegrity = 0.5
+    let gifManager = SwiftyGifManager(memoryLimit: GIF.memoryLimitInFavorites)
+    let levelOfIntegrity = GIF.levelOfIntegrityInFavorites
     
-    var noItemsView = NoItemsView()
+    private var noItemsView = NoItemsView()
     
     // TODO: Manage it better in the VC Life Cycle
-    
     private var gifs: [LocalGif] = []
+    
+    // MARK: - View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         collectionView.delegate = self
         collectionView.dataSource = self
-
+        fluidCollectionViewLayout.delegate = self
+                
         noItemsView.textMessage = "You haven't added any favorite GIF yet."
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
 
-        // Register cell classes
+        collectionView.alwaysBounceVertical = true
         
+        // Register cell classes
         self.collectionView!.register(UINib(nibName: Identifiers.FavoriteCVCell, bundle: nil), forCellWithReuseIdentifier: Identifiers.FavoriteCVCell)
     }
     
@@ -51,7 +53,7 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
         collectionView.reloadData()
     }
 
-    // MARK: UICollectionViewDataSource
+    // MARK: - UICollectionViewDataSource
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -79,50 +81,18 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
         return cell
     }
 
-    // MARK: - UICollectionViewDelegateFlowLayout
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let localGif = gifs[indexPath.row]
-        
-        // Hardcoded for now
-        let predefinedCellBorder: CGFloat = 0
-        let numberOfCellPerRow: CGFloat = 2
-        
-        let widthForCell = (collectionView.bounds.size.width / numberOfCellPerRow)
-        let widthForImage = widthForCell - (predefinedCellBorder * 2) // Both sides
-        
-        let heightForImage = Calculation.heightForWidth(widthForImage, originalWidth: localGif.localImageWidth, originalHeight: localGif.localImageHeight)
-
-        let heightForCell = heightForImage + (predefinedCellBorder * 2) // Both sides
-        
-        return CGSize(width: widthForCell, height: heightForCell)
-    }
+    // MARK: - FluidLayoutDelegate
     
     func collectionView(collectionView: UICollectionView, heightForCellAtIndexPath indexPath: IndexPath, width: CGFloat) -> CGFloat {
         let localGif = gifs[indexPath.row]
         
-        // Hardcoded for now
-        let predefinedCellBorder: CGFloat = 0
-        let numberOfCellPerRow: CGFloat = 2
+        let widthForCell = fluidCollectionViewLayout.cellWidth
         
-        let widthForCell = (collectionView.bounds.size.width / numberOfCellPerRow)
-        let widthForImage = widthForCell - (predefinedCellBorder * 2) // Both sides
-        
-        let heightForImage = Calculation.heightForWidth(widthForImage, originalWidth: localGif.localImageWidth, originalHeight: localGif.localImageHeight)
-        
-        let heightForCell = heightForImage + (predefinedCellBorder * 2) // Both sides
-
+        let heightForCell = Calculation.heightForWidth(widthForCell, originalWidth: localGif.localImageWidth, originalHeight: localGif.localImageHeight)
         
         return heightForCell
-
     }
     
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-//        return UIEdgeInsetsMake(0, 0, 0, 0)
-//    }
-    
-    // MARK: - UICollectionViewDelegate
 
     /*
      // MARK: - Navigation
@@ -135,7 +105,12 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
      */
 }
 
+// MARK: - FavoriteActionsDelegate
 extension FavoritesCVC: FavoriteActionsDelegate {
+    func share(imageData: Data) {
+        shareGif(imageData: imageData)
+    }
+    
     func deleteFavorite(forCell cell: FavoriteCVCell) {
         guard let object = cell.localGif,
             let localImageFileName = object.localImageFileName,

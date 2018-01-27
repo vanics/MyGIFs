@@ -11,7 +11,7 @@ import Moya
 import Result
 import Moya_ObjectMapper
 
-// MARK: - Provider Setup
+// MARK: - Provider Setup (Useful later for RxSwift Implementation)
 
 struct Network {
     static private(set) var provider = MoyaProvider<GiphyAPI>(plugins: [NetworkLoggerPlugin(verbose: true, responseDataFormatter: JSONResponseDataFormatter)])
@@ -50,10 +50,6 @@ var GiphyProvider = MoyaProvider<GiphyAPI>(
 )
 
 // MARK: - Helpers
-
-//public func url(_ route: TargetType) -> String {
-//    return route.baseURL.appendingPathComponent(route.path).absoluteString
-//}
 
 private func JSONResponseDataFormatter(_ data: Data) -> Data {
     do {

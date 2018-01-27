@@ -16,6 +16,8 @@ enum FeedManagerType {
 
 class FeedManager {
     
+    typealias Completion = ((_ updated: Bool, _ partialUpdated: Int?, _ error: String?) -> Void)
+
     private let disposeBag = DisposeBag()
 
     private var loadingData = false
@@ -24,6 +26,7 @@ class FeedManager {
     private(set) static var limit = 30
     private(set) var isLoading = false
 
+    // MARK: - Attributes
     var query: String = "" {
         didSet {
             if oldValue != query {
@@ -32,17 +35,17 @@ class FeedManager {
         }
     }
     
-    var gifs = [Gif]()
-    
-    typealias Completion = ((_ updated: Bool, _ partialUpdated: Int?, _ error: String?) -> Void)
+    private(set) var gifs = [Gif]()
 
-    // TODO: Run in Serial thread to avoid losing part of the data
+    // MARK: - Public Interface
     
     func retrieveGifs(onCompletion: Completion?) {
         guard !isLoading else {
             return
         }
         
+        // TODO: Run in Serial thread
+
         if query.isEmpty {
             retrieveFeed(onCompletion: onCompletion)
         } else {
@@ -52,11 +55,19 @@ class FeedManager {
         isLoading = true
     }
     
+    func cleanTracking() {
+        totalItem = 0
+        currentOffset = 0
+        loadingData = false
+        gifs = []
+    }
+    
+    // MARK: - Private Interface
+    
     private func retrieveSearch(onCompletion: Completion?) {
-        // .mapArray(Gif.self)
         GiphyProvider.rx.request(
             .search(value: query, limit: FeedManager.limit, offset: currentOffset))
-            .mapJSON()
+            .mapJSON() // .mapArray(Gif.self)
             .subscribe { [weak self] (event) in
                 // This is in the main thread
                 self?.parseEventReturn(event: event, onCompletion: onCompletion)
@@ -65,7 +76,6 @@ class FeedManager {
     }
     
     private func retrieveFeed(onCompletion: Completion?) {
-        // .mapArray(Gif.self)
         GiphyProvider.rx.request(
             .trending(limit: FeedManager.limit, offset: currentOffset))
             .mapJSON()
@@ -76,23 +86,11 @@ class FeedManager {
             .disposed(by: disposeBag)
     }
     
-    /*
-     Network.request(.trending(limit: 20, offset: 10), success: { (response) in
-     print(response)
-     }, error: { (response) in
-     print(response)
-     
-     }) { (moyaError) in
-     print(moyaError)
-     }
-     */
-    
     private func parseEventReturn(event: SingleEvent<Any>, onCompletion: Completion?) {
 
         isLoading = false
         
         switch event {
-        // TODO: When to use NSDictionary
         case .success(let response):
             if let jsonDict = response as? NSDictionary,
                 let jsonData = jsonDict["data"],
@@ -126,12 +124,5 @@ class FeedManager {
         case .error(let error):
             onCompletion?(false, nil, error.localizedDescription)
         }
-    }
-    
-    func cleanTracking() {
-        totalItem = 0
-        currentOffset = 0
-        loadingData = false
-        gifs = []
     }
 }
