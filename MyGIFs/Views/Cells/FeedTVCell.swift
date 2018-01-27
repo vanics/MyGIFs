@@ -15,15 +15,22 @@ protocol FeedActionsDelegate: class {
 }
 
 class FeedTVCell: UITableViewCell {    
-    weak var feedActionsDelegate: FeedActionsDelegate?
     
     @IBOutlet private weak var gifImageView: UIImageView!
     @IBOutlet private weak var favoriteBtn: UIButton!
     
-    // MARK: - Public Interface
-    var isFavorite: Bool!
+    private var isFavorite: Bool! // TODO: Remove it.
 
-    var gif: Gif? {
+    // MARK: - Public Interface
+    func setupCell(delegate: FeedActionsDelegate, gif: Gif) {
+        self.feedActionsDelegate = delegate
+        self.gif = gif
+    }
+    
+    // MARK: - Attributes
+    private weak var feedActionsDelegate: FeedActionsDelegate?
+
+    private var gif: Gif? {
         didSet {
             backgroundColor = UIColor.randomFlat
 
@@ -35,12 +42,7 @@ class FeedTVCell: UITableViewCell {
         }
     }
     
-    func cancelImageDownloadTask() {
-        gifImageView?.kf.cancelDownloadTask()
-        
-        // TODO: Check if it really clears the previous image
-        gifImageView?.image = nil
-    }
+    // MARK: - Cell Life Cycle
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -48,12 +50,17 @@ class FeedTVCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
+        cancelImageDownloadTask()
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+    // MARK: - Helpers
+
+    private func cancelImageDownloadTask() {
+        gifImageView?.kf.cancelDownloadTask()
         
-        // Configure the view for the selected state
+        // TODO: Check if it really clears the previous image
+        gifImageView?.image = nil
     }
     
     private func setFavoriteBtn(_ isFavorite: Bool) {
@@ -61,6 +68,8 @@ class FeedTVCell: UITableViewCell {
         favoriteBtn.setImage(UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate), for: .normal)
         favoriteBtn.imageView?.tintColor = .red
     }
+    
+    // MARK: - Actions
     
     @IBAction private func favoriteBtnDidTouch(_ sender: UIButton) {
 

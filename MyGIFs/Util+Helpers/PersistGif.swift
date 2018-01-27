@@ -13,15 +13,13 @@ class PersistGif {
     // Singleton
     static let shared = PersistGif()
     
+    // MARK: - Config
     private let storageFolder = "gifs"
     
     // Get access to shared instance of the file manager
     private let fileManager = FileManager.default
-    
     private var documentsURL: URL
-    
     private var storageURL: URL
-
     private var storagePath: String
     
     private init() {
@@ -43,16 +41,6 @@ class PersistGif {
         }
     }
     
-    func removeImage(fileName: String) -> Bool {
-        let filePath = storageURL.appendingPathComponent("\(fileName)")
-
-        if let success = try? removeImage(filePath: filePath) {
-            return success
-        }
-        
-        return false
-    }
-    
     private func removeImage(filePath: URL) throws -> Bool {
         // Look through array of files in documentDirectory
         let files = try fileManager.contentsOfDirectory(atPath: "\(storagePath)")
@@ -63,6 +51,18 @@ class PersistGif {
                 try fileManager.removeItem(atPath: filePath.path)
                 return true
             }
+        }
+        
+        return false
+    }
+    
+    // MARK: - Public Interface
+    
+    func removeImage(fileName: String) -> Bool {
+        let filePath = storageURL.appendingPathComponent("\(fileName)")
+
+        if let success = try? removeImage(filePath: filePath) {
+            return success
         }
         
         return false
@@ -109,6 +109,4 @@ class PersistGif {
         
         return nil
     }
-
-
 }
