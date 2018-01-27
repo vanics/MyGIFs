@@ -9,20 +9,26 @@
 import Foundation
 import CoreData
 
+enum CoreDataError: String {
+    case managedContextNotLoaded = "Managed Context not initialized in App Delegate"
+}
+
+// Could also have created an LocalGif extension
 class MyGifsCoreData {
     static let shared = MyGifsCoreData()
-    
     static let entityName = "LocalGif"
     
-    // It will have a context since it will be first called
     var managedContext: NSManagedObjectContext?
 
     private init () {}
     
+    // MARK: Public Interface
+    
     func retrieveById(_ id: String) -> Bool {
         guard let managedContext = managedContext else {
-            fatalError("Managed Context not initialized")
+            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
         }
+        
         // TODO: Run it async
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: MyGifsCoreData.entityName)
@@ -46,10 +52,8 @@ class MyGifsCoreData {
     
     func fetchAll() -> [LocalGif] {
         guard let managedContext = managedContext else {
-            fatalError("Managed Context not initialized")
+            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
         }
-
-        //let fetchRequest = NSFetchRequest<LocalGif>(entityName: "LocalGif")
         
         do {
             return try managedContext.fetch(LocalGif.fetchRequest())
@@ -63,15 +67,11 @@ class MyGifsCoreData {
     
     func saveNewItem(_ item: Gif, imagePath: String) {
         guard let managedContext = managedContext else {
-            fatalError("Managed Context not initialized")
+            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
         }
         
-        
         // TODO: Run it async
-        
-//        let entity = NSEntityDescription.entity(forEntityName: MyGifsCoreData.entityName, in: managedContext)
-//        let newGif = NSManagedObject(entity: entity!, insertInto: managedContext)
-//
+
         let newGif = LocalGif(context: managedContext)
         newGif.id = item.id
         newGif.title = item.title
@@ -93,7 +93,7 @@ class MyGifsCoreData {
     
     func deleteById(_ id: String) -> Bool {
         guard let managedContext = managedContext else {
-            fatalError("Managed Context not initialized")
+            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
         }
         
         let request = NSFetchRequest<LocalGif>(entityName: "LocalGif")
@@ -119,7 +119,7 @@ class MyGifsCoreData {
     
     func deleteByObject(_ object: LocalGif) -> Bool {
         guard let managedContext = managedContext else {
-            fatalError("Managed Context not initialized")
+            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
         }
         
         managedContext.delete(object)
