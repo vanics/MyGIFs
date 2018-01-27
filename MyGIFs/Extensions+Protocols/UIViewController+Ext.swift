@@ -9,6 +9,7 @@
 import UIKit
 
 extension UIViewController {
+    /// Util to show alerts
     func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
@@ -20,13 +21,21 @@ extension UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    // Implements dissmiss keyboard when the user taps outside keyboard
+    /// Share GIF functionality
+    func shareGif(imageData: Data) {
+        let vc = UIActivityViewController(activityItems: [imageData], applicationActivities: [])
+        present(vc, animated: true)
+    }
+    
+    /// Implements dissmiss keyboard when the user taps outside keyboard
     func setupDismissKeyboard() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
+    
+    
 }

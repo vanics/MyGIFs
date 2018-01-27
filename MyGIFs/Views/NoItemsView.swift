@@ -10,6 +10,8 @@ import UIKit
 
 class NoItemsView: UIView {
 
+    // MARK: - Attributes
+    
     var textMessage = "No Items" {
         didSet {
             label.text = textMessage
@@ -38,6 +40,7 @@ class NoItemsView: UIView {
     }
     
     // MARK: - Layout Setup
+    
     func setupView() {
         addSubview(label)
         

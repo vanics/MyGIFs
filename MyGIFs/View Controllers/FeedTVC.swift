@@ -20,16 +20,13 @@ class FeedTVC: UITableViewController {
 
     // By defining nil we say that we want to use the same view that we're
     // searching to display the results
-    let searchController = UISearchController(searchResultsController: nil)
-
-    static let minimumDistanceToTriggerFeedManagerLoad: CGFloat = 1000
-
-    lazy var feedManager = FeedManager()
-    
-    let disposeBag = DisposeBag()
+    private let searchController = UISearchController(searchResultsController: nil)
+    private let disposeBag = DisposeBag()
+    private lazy var feedManager = FeedManager()
     private var largeGifSelectionIndexPath: IndexPath?
     
-    let temporaryCDContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    // MARK: - Config
+    static let minimumDistanceToTriggerFeedManagerLoad: CGFloat = 1000
     
     // MARK: - Some UI Setup
     lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -39,6 +36,8 @@ class FeedTVC: UITableViewController {
         return loading
     }()
     
+    // MARK: - View Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -46,6 +45,7 @@ class FeedTVC: UITableViewController {
         setupSearchController()
         
         tableView.backgroundView = loadingIndicator
+        
         loadDynamicData()
     }
     
@@ -155,9 +155,17 @@ class FeedTVC: UITableViewController {
             indexPaths.append(IndexPath(row: nextIndex, section: 0))
         }
         
+        // In order to avoid jumpy scrolling while adding new cells
+        let currentOffset = tableView.contentOffset
+        UIView.setAnimationsEnabled(false)
+        // -----
+        
         tableView.beginUpdates()
-        tableView.insertRows(at: indexPaths, with: .automatic)
+        tableView.insertRows(at: indexPaths, with: .none)
         tableView.endUpdates()
+        
+        UIView.setAnimationsEnabled(true)
+        tableView.setContentOffset(currentOffset, animated: false)
     }
     
     // MARK: - Util
@@ -168,6 +176,7 @@ class FeedTVC: UITableViewController {
     }
 }
 
+// MARK: - FeedActionsDelegate
 extension FeedTVC: FeedActionsDelegate {
     func addFavorite(item: Gif, imageData: Data) {
         if let imagePath = PersistGif.shared.storeLocalImage(name: item.id, imageData: imageData) {
@@ -183,6 +192,7 @@ extension FeedTVC: FeedActionsDelegate {
     }
 }
 
+// MARK: - UISearchResultsUpdating
 extension FeedTVC: UISearchResultsUpdating {
     // MARK: - UISearchResultsUpdating Delegate
     
@@ -192,7 +202,7 @@ extension FeedTVC: UISearchResultsUpdating {
         loadDynamicData() // LoadData for new query || Will be RxSwift like later
     }
     
-    // MARK: - Private
+    // MARK: - Setup Search Controller
     
     // Setup the Search Controller
     private func setupSearchController() {

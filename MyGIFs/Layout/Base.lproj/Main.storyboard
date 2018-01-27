@@ -20,12 +20,7 @@
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="7SE-hV-PXe">
                                 <rect key="frame" x="0.0" y="64" width="375" height="554"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Lsv-md-MXf">
-                                    <size key="itemSize" width="50" height="50"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
+                                <collectionViewLayout key="collectionViewLayout" id="uCH-dl-3S0" customClass="FluidCollectionViewLayout" customModule="MyGIFs" customModuleProvider="target"/>
                                 <cells/>
                             </collectionView>
                         </subviews>
@@ -41,6 +36,7 @@
                     <navigationItem key="navigationItem" title="Favourites" id="5u7-9y-ecc"/>
                     <connections>
                         <outlet property="collectionView" destination="7SE-hV-PXe" id="36C-75-H9X"/>
+                        <outlet property="fluidCollectionViewLayout" destination="uCH-dl-3S0" id="uhk-rw-Suy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -124,11 +120,11 @@
             </objects>
             <point key="canvasLocation" x="-163.19999999999999" y="132.23388305847078"/>
         </scene>
-        <!--Default NavigationVC-->
+        <!--Favorites-->
         <scene sceneID="LZi-Bl-FVD">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="58J-a9-FwR" customClass="DefaultNavigationVC" customModule="MyGIFs" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="BRl-ld-5NE"/>
+                    <tabBarItem key="tabBarItem" title="Favorites" image="FavoritesFillIcon" id="BRl-ld-5NE"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Ce2-tA-PU9">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -143,11 +139,11 @@
             </objects>
             <point key="canvasLocation" x="241" y="913"/>
         </scene>
-        <!--Default NavigationVC-->
+        <!--Feed-->
         <scene sceneID="AmP-Do-KHp">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Bh1-hQ-7DX" customClass="DefaultNavigationVC" customModule="MyGIFs" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="mostViewed" id="pLS-C4-YbR"/>
+                    <tabBarItem key="tabBarItem" title="Feed" image="HomeFillIcon" id="pLS-C4-YbR"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="i0H-yE-KLk">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -164,6 +160,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="FavoritesFillIcon" width="26" height="24"/>
         <image name="FavoritesIcon" width="26" height="24"/>
+        <image name="HomeFillIcon" width="21" height="23"/>
     </resources>
 </document>

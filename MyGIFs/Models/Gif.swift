@@ -13,6 +13,7 @@ import CoreData
 // MARK: Initializer and Properties
 struct Gif: Mappable {
     
+    // MARK: - Attributes
     var id: String!
     var type: String? // gif
     var url: String?
@@ -29,7 +30,7 @@ struct Gif: Mappable {
     var downsizedLarge: GifSize?
     var isFavorite: Bool = false
     
-    // MARK: JSON
+    // MARK: - JSON
     init?(map: Map) {
         // check if a required "id" property exists within the JSON.
         // Not checking the other proprieties trusting the JSON return is alright
@@ -58,8 +59,6 @@ struct Gif: Mappable {
         original <- map["images.original"]
         downsizedLarge <- map["images.downsized_large"]
     }
-    
-    var managedContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     func isSaved() -> Bool {
         guard let id = id else {
