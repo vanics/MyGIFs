@@ -21,13 +21,23 @@ class FeedTVC: UITableViewController {
     // By defining nil we say that we want to use the same view that we're
     // searching to display the results
     let searchController = UISearchController(searchResultsController: nil)
-    var gifs = [Gif]()
+
+    static let minimumDistanceToTriggerFeedManagerLoad: CGFloat = 1000
+
+    lazy var feedManager = FeedManager()
+    
     let disposeBag = DisposeBag()
     private var largeGifSelectionIndexPath: IndexPath?
     
     let temporaryCDContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    var indexOfCurrentContentPage = 1
+    // MARK: - Some UI Setup
+    lazy var loadingIndicator: UIActivityIndicatorView = {
+        let loading = UIActivityIndicatorView()
+        loading.hidesWhenStopped = true
+        loading.tintColor = UIColor.white
+        return loading
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,43 +45,27 @@ class FeedTVC: UITableViewController {
         setupImageCaching()
         setupSearchController()
         
-        // .mapArray(Gif.self)
-        GiphyProvider.rx.request(
-            .trending(limit: nil, offset: nil))
-            .mapJSON()
-            .subscribe { [weak self] (event) in
-                // This is in the main thread
-                switch event {
-                // TODO: When to use NSDictionary
-                case .success(let response):
-                    if let jsonDict = response as? NSDictionary,
-                       let jsonData = jsonDict["data"],
-                       let gifs = Mapper<Gif>().mapArray(JSONObject: jsonData) {
-                        self?.gifs = gifs
-                        self?.tableView.reloadData()
-                    } else {
-                        self?.showAlert(title: "Error", message: "Error parsing data")
-                    }
-                case .error(let error):
-                    self?.showAlert(title: "Error", message: error.localizedDescription)
-                    break
-                }
-            }
-        .disposed(by: disposeBag)
-        
-        /*
-        Network.request(.trending(limit: 20, offset: 10), success: { (response) in
-            print(response)
-        }, error: { (response) in
-            print(response)
+        tableView.backgroundView = loadingIndicator
+        loadDynamicData()
+    }
+    
+    // MARK: - Feed Manager
+    
+    func loadDynamicData() {
+        loadingIndicator.startAnimating()
 
-        }) { (moyaError) in
-            print(moyaError)
+        feedManager.retrieveGifs { [weak self] (updated, previousItemsCount, error) in
+            self?.loadingIndicator.stopAnimating()
+            
+            if let error = error {
+                self?.showAlert(title: "Error", message: error)
+                return
+            }
+            
+            if updated {
+                self?.updateTableView(currentItemsCount: self!.feedManager.gifs.count, previousItemCount: previousItemsCount)
+            }
         }
-         */
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
@@ -81,7 +75,7 @@ class FeedTVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return gifs.count
+        return feedManager.gifs.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -89,20 +83,9 @@ class FeedTVC: UITableViewController {
         
         // Configure the cell...
         cell.feedActionsDelegate = self
-        cell.gif = gifs[indexPath.row]
+        cell.gif = feedManager.gifs[indexPath.row]
 
         return cell
-    }
-    
-    func coreData() {
-        
-    }
-    
-    // MARK: - Image Caching and Related
-    
-    func setupImageCaching() {
-        ImageCache.default.maxDiskCacheSize = 50 * 1024 * 1024 // 50 MB
-        // Default cache stores it for up to one week
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -113,49 +96,75 @@ class FeedTVC: UITableViewController {
             indexPathsForUpdate.append(oldSelectedIndexPath)
         }
         
-        largeGifSelectionIndexPath = indexPath
+        // It's the same as the previous which means we should unselect it.
+        if indexPath == largeGifSelectionIndexPath {
+            largeGifSelectionIndexPath = nil
+        } else {
+            largeGifSelectionIndexPath = indexPath
+        }
         
-        tableView.beginUpdates()
-        tableView.reloadRows(at: indexPathsForUpdate, with: UITableViewRowAnimation.fade)
-        tableView.endUpdates()
+        updateRowAt(indexPaths: indexPathsForUpdate)
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath == largeGifSelectionIndexPath,
-            let height = gifs[indexPath.row].fixedWidth?.heightForWidth(view.frame.width) {
+            let height = feedManager.gifs[indexPath.row].fixedWidth?.heightForWidth(view.frame.width) {
             return height
         } else {
             return 150
         }
     }
     
-    // We want to avoid loading an image in the wrong cell
-    // without this, it could happen if the user scrolls too fast
-    override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.FeedTVCell) as? FeedTVCell
-        cell?.cancelImageDownloadTask()
-    }
+    // MARK: - Image Caching and Related
     
-    // MARK: - Navigation
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    func setupImageCaching() {
+        ImageCache.default.maxDiskCacheSize = 100 * 1024 * 1024 // 50 MB
+        // Default cache stores it for up to one week
     }
     
     // MARK: - UIScrollView / Infinite Scrolling
+    
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Where the user is in the y-axis
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let contentRemainder = contentHeight - scrollView.frame.size.height
+        let currentContentOffset = scrollView.contentOffset.y
+        let maximumContentOffset = scrollView.contentSize.height - scrollView.frame.size.height
         
-        if offsetY > contentRemainder {
-            indexOfCurrentContentPage += 1
-            
-            // Load more data
+        let distanceFromBottom = maximumContentOffset - currentContentOffset
+        
+        // Set the minimum distance from bottom to load more posts
+        if distanceFromBottom <= FeedTVC.minimumDistanceToTriggerFeedManagerLoad {
+            loadDynamicData()
         }
+    }
+    
+    // MARK: - Release Keyboard if user interact with scrollView
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchController.searchBar.resignFirstResponder()
+    }
+    
+    // MARK: - Add items without reloading the tableView (More fluid experience)
+    func updateTableView(currentItemsCount: Int, previousItemCount: Int?) {
+        
+        guard let previousItemCount = previousItemCount, currentItemsCount > previousItemCount else {
+            tableView.reloadData()
+            return
+        }
+        
+        var indexPaths = [IndexPath]()
+
+        for nextIndex in previousItemCount..<currentItemsCount {
+            indexPaths.append(IndexPath(row: nextIndex, section: 0))
+        }
+        
+        tableView.beginUpdates()
+        tableView.insertRows(at: indexPaths, with: .automatic)
+        tableView.endUpdates()
+    }
+    
+    // MARK: - Util
+    func updateRowAt(indexPaths: [IndexPath]) {
+        tableView.beginUpdates()
+        tableView.reloadRows(at: indexPaths, with: UITableViewRowAnimation.middle)
+        tableView.endUpdates()
     }
 }
 
@@ -168,16 +177,19 @@ extension FeedTVC: FeedActionsDelegate {
     
     func removeFavorite(item: Gif) {
         // TODO: Invert it
-        if PersistGif.shared.removeImage(name: item.id) {
-            _ = MyGifsCoreData.shared.deleteById(item.id)
+        if MyGifsCoreData.shared.deleteById(item.id) {
+            _ = PersistGif.shared.removeImage(fileName: "\(item.id).gif")
         }
     }
 }
 
 extension FeedTVC: UISearchResultsUpdating {
     // MARK: - UISearchResultsUpdating Delegate
+    
     func updateSearchResults(for searchController: UISearchController) {
-        // TODO
+        feedManager.query = searchController.searchBar.text ?? ""
+        tableView.reloadData() // DataSource Changed due query change
+        loadDynamicData() // LoadData for new query || Will be RxSwift like later
     }
     
     // MARK: - Private
@@ -192,13 +204,15 @@ extension FeedTVC: UISearchResultsUpdating {
 
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = true // By Default
-
+        
         // We can't do it with Interface Builder
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchController
             navigationItem.hidesSearchBarWhenScrolling = false
         } else {
             tableView.tableHeaderView = searchController.searchBar
+            
+            // TODO: Improve Search Controller in iOS 10
         }
         
         // Ensure that the search bar does not remain on screen if the user
