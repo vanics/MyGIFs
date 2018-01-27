@@ -45,6 +45,7 @@ class FeedTVC: UITableViewController {
         setupSearchController()
         
         tableView.backgroundView = loadingIndicator
+        tableView.alwaysBounceVertical = true
         
         loadDynamicData()
     }
@@ -216,16 +217,23 @@ extension FeedTVC: UISearchResultsUpdating {
         searchController.searchBar.tintColor = .white
 
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = true // By Default
         
         // We can't do it with Interface Builder
         if #available(iOS 11.0, *) {
+            searchController.hidesNavigationBarDuringPresentation = true // By Default
             navigationItem.searchController = searchController
             navigationItem.hidesSearchBarWhenScrolling = false
         } else {
-            tableView.tableHeaderView = searchController.searchBar
+            // TODO: Improve Search Bar in iOS 10
+
+            searchController.searchBar.searchBarStyle = .minimal
             
-            // TODO: Improve Search Controller in iOS 10
+            // Include the search bar within the navigation bar.
+            searchController.hidesNavigationBarDuringPresentation = false
+            navigationItem.titleView = self.searchController.searchBar
+            definesPresentationContext = false
+            
+            //tableView.tableHeaderView = searchController.searchBar
         }
         
         // Ensure that the search bar does not remain on screen if the user
