@@ -50,21 +50,22 @@ class FavoriteCVCell: UICollectionViewCell {
     // MARK: - Cell Life Cycle
     override func awakeFromNib() {
         super.awakeFromNib()
-        setupCell()
+        setupButtons()
     }
     
     override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
-        setupCell()
-    }
-    
-    private func setupCell() {
-        favoriteBtn.imageView?.contentMode = .scaleAspectFit
-        shareBtn.imageView?.contentMode = .scaleAspectFit
+        setupButtons()
     }
     
     override func prepareForReuse() {
         gifImageView.image = nil
+    }
+    
+    private func setupButtons() {
+        // Image inside buttons and PDF files take some extra work.
+        favoriteBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 10, 10, 0) // top, left, bottom, right
+        shareBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 15, 20, 5)
     }
     
     // MARK: - Actions
