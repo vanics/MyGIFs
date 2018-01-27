@@ -22,7 +22,7 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     // Allow quite some memory, but is either memory or CPU
     // https://github.com/kirualex/SwiftyGif#benchmark
     let gifManager = SwiftyGifManager(memoryLimit: GIF.memoryLimitInFavorites)
-    let levelOfIntegrity = GIF.levelOfIntegrityInFavorites
+    let gifLevelOfIntegrity = GIF.levelOfIntegrityInFavorites
     
     private var noItemsView = NoItemsView()
     
@@ -75,8 +75,7 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Identifiers.FavoriteCVCell, for: indexPath) as! FavoriteCVCell
         
         // Configure the cell
-        cell.favoriteActionsDelegate = self
-        cell.localGif = gifs[indexPath.row]
+        cell.setupCell(delegate: self, localGif: gifs[indexPath.row], gifLevelOfIntegrity: gifLevelOfIntegrity)
         
         return cell
     }
