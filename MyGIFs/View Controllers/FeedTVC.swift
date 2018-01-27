@@ -82,8 +82,7 @@ class FeedTVC: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.FeedTVCell, for: indexPath) as! FeedTVCell
         
         // Configure the cell...
-        cell.feedActionsDelegate = self
-        cell.gif = feedManager.gifs[indexPath.row]
+        cell.setupCell(delegate: self, gif: feedManager.gifs[indexPath.row])
 
         return cell
     }

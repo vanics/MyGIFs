@@ -27,12 +27,7 @@ class FavoriteCVCell: UICollectionViewCell {
         self.localGif = localGif
     }
     
-    // MARK: - Attributes
-    private var gifLevelOfIntegrity: Float = 1.0
-    
-    private weak var favoriteActionsDelegate: FavoriteActionsDelegate?
-    
-    private var localGif: LocalGif? {
+    var localGif: LocalGif? {
         didSet {
             // Config Cell on
             if let gifManager = favoriteActionsDelegate?.gifManager,
@@ -40,12 +35,17 @@ class FavoriteCVCell: UICollectionViewCell {
                 let imageData = PersistGif.shared.imageData(forFileName: localImageFileName) {
                 // TODO: Encapsulate this and send using Depedency Injection
                 // Making this cell more reusable?
-                                
+                
                 let gif = UIImage(gifData: imageData, levelOfIntegrity: gifLevelOfIntegrity)
                 gifImageView.setGifImage(gif, manager: gifManager)
             }
         }
     }
+    
+    // MARK: - Attributes
+    private var gifLevelOfIntegrity: Float = 1.0
+    
+    private weak var favoriteActionsDelegate: FavoriteActionsDelegate?
     
     // MARK: - Cell Life Cycle
     override func awakeFromNib() {
