@@ -162,6 +162,7 @@
 		20F1EBE020195DCB00C54341 /* Layout */ = {
 			isa = PBXGroup;
 			children = (
+				2084450E201C516300D1BF74 /* FluidCollectionViewLayout.swift */,
 				20F1EBC92019458D00C54341 /* Main.storyboard */,
 				20F1EBD12019458D00C54341 /* LaunchScreen.storyboard */,
 			);
@@ -190,7 +191,6 @@
 		20F1EBE520195EC400C54341 /* Util+Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				2084450E201C516300D1BF74 /* FluidCollectionViewLayout.swift */,
 				20F1EC0E201B0C4800C54341 /* Calculation.swift */,
 				20F1EC10201B1A9500C54341 /* PersistGif.swift */,
 			);
