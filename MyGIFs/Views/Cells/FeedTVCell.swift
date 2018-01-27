@@ -21,14 +21,16 @@ class FeedTVCell: UITableViewCell {
     @IBOutlet private weak var favoriteBtn: UIButton!
     
     // MARK: - Public Interface
-    
+    var isFavorite: Bool!
+
     var gif: Gif? {
         didSet {
             backgroundColor = UIColor.randomFlat
-            print(UIColor.randomFlat)
+
             if let imageUrl = gif?.fixedWidth?.url {
                 gifImageView?.kf.setImage(with: URL(string: imageUrl))
-                setFavoriteBtn(gif!.isFavorite)
+                isFavorite = gif?.isSaved()
+                setFavoriteBtn(isFavorite)
             }
         }
     }
@@ -61,18 +63,24 @@ class FeedTVCell: UITableViewCell {
     }
     
     @IBAction private func favoriteBtnDidTouch(_ sender: UIButton) {
+
         // TODO: Check if the image was loaded
         guard let gif = gif,
-            let imageData = gifImageView.kf.base.currentImage?.imageData else {
+            let imageData = gifImageView.kf.base.image?.kf.gifRepresentation() else {
             return
         }
 
-        setFavoriteBtn(!gif.isFavorite)
+        // TODO: Should retrieve that staticaly but model should be updated first
+        // For now, let's check on the Core Data again.
         
-        if !gif.isFavorite {
+        setFavoriteBtn(!isFavorite)
+        
+        if !isFavorite {
             feedActionsDelegate?.addFavorite(item: gif, imageData: imageData)
         } else {
             feedActionsDelegate?.removeFavorite(item: gif)
         }
+        
+        isFavorite = !isFavorite
     }
 }

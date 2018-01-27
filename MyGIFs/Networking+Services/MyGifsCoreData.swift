@@ -44,8 +44,21 @@ class MyGifsCoreData {
         return false
     }
     
-    private func storeLocalImage(imageData: Data) {
+    func fetchAll() -> [LocalGif] {
+        guard let managedContext = managedContext else {
+            fatalError("Managed Context not initialized")
+        }
+
+        //let fetchRequest = NSFetchRequest<LocalGif>(entityName: "LocalGif")
         
+        do {
+            return try managedContext.fetch(LocalGif.fetchRequest())
+
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        
+        return []
     }
     
     func saveNewItem(_ item: Gif, imagePath: String) {
@@ -65,7 +78,7 @@ class MyGifsCoreData {
         newGif.bitlyGifUrl = item.bitlyGifUrl
         newGif.bitlyUrl = item.bitlyUrl
         newGif.caption = item.caption
-        //newGif.localImageFilePath = item
+        newGif.localImageFileName = imagePath
         newGif.localImageHeight = item.fixedWidth!.height ?? 0.0
         newGif.localImageSize = item.fixedWidth!.size ?? 0.0
         newGif.localImageWidth = item.fixedWidth!.width ?? 0.0
@@ -74,7 +87,7 @@ class MyGifsCoreData {
         do {
             try managedContext.save()
         } catch let error as NSError {
-            print("Could not fetch \(error), \(error.userInfo)")
+            print("Could not save \(error), \(error.userInfo)")
         }
     }
     
@@ -92,6 +105,7 @@ class MyGifsCoreData {
 
             for object in result {
                 managedContext.delete(object)
+                try? managedContext.save()
                 deletes += 1
             }
             
@@ -103,12 +117,14 @@ class MyGifsCoreData {
         return false
     }
     
-    func deleteByObject(_ object: LocalGif) {
+    func deleteByObject(_ object: LocalGif) -> Bool {
         guard let managedContext = managedContext else {
             fatalError("Managed Context not initialized")
         }
         
         managedContext.delete(object)
         try? managedContext.save()
+        
+        return true
     }
 }

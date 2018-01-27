@@ -5,7 +5,7 @@
         <attribute name="bitlyUrl" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="caption" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="localImageFilePath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="localImageFileName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="localImageHeight" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="localImageSize" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="localImageWidth" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>

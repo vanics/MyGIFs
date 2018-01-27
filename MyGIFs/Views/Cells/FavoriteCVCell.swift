@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import SwiftyGif
 
 protocol FavoriteActionsDelegate: class {
-    func deleteFavorite(_ object: LocalGif)
+    var gifManager: SwiftyGifManager { get }
+    func deleteFavorite(forCell cell: FavoriteCVCell)
 }
 
 class FavoriteCVCell: UICollectionViewCell {
@@ -19,15 +21,23 @@ class FavoriteCVCell: UICollectionViewCell {
     
     var localGif: LocalGif? {
         didSet {
-            
+            if let gifManager = favoriteActionsDelegate?.gifManager,
+                let localImageFileName = localGif?.localImageFileName,
+                let imageData = PersistGif.shared.imageData(forFileName: localImageFileName) {
+                // TODO: Encapsulate this and send using Depedency Injection
+                // Making this cell more reusable?
+                                
+                let gif = UIImage(gifData: imageData, levelOfIntegrity: GIF.levelOfIntegrity)
+                gifImageView.setGifImage(gif, manager: gifManager)
+            }
         }
     }
     
+    override func prepareForReuse() {
+        gifImageView.image = nil
+    }
+    
     @IBAction func favoriteBtnDidTouch(_ sender: UIButton) {
-        guard let localGif = localGif else {
-            return
-        }
-        
-        favoriteActionsDelegate?.deleteFavorite(localGif)
+        favoriteActionsDelegate?.deleteFavorite(forCell: self)
     }
 }

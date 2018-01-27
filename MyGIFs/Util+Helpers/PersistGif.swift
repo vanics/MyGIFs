@@ -13,7 +13,7 @@ class PersistGif {
     // Singleton
     static let shared = PersistGif()
     
-    private let storageFolder = GIF.storageFolder
+    private let storageFolder = "gifs"
     
     // Get access to shared instance of the file manager
     private let fileManager = FileManager.default
@@ -21,7 +21,7 @@ class PersistGif {
     private var documentsURL: URL
     
     private var storageURL: URL
-    
+
     private var storagePath: String
     
     private init() {
@@ -32,11 +32,19 @@ class PersistGif {
         
         // Get the document URL as a string
         storagePath = storageURL.path
+        
+        // Create folder if it doesn't exist
+        if storageFolder.count > 0 && !fileManager.fileExists(atPath: storagePath) {
+            do {
+                try fileManager.createDirectory(atPath: storagePath, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Couldn't create document directory")
+            }
+        }
     }
     
-    func removeImage(name: String) -> Bool {
-        // Create filePath URL by appending final path component (name of image)
-        let filePath = documentsURL.appendingPathComponent("\(name).gif")
+    func removeImage(fileName: String) -> Bool {
+        let filePath = storageURL.appendingPathComponent("\(fileName)")
 
         if let success = try? removeImage(filePath: filePath) {
             return success
@@ -62,12 +70,12 @@ class PersistGif {
     
     func storeLocalImage(name: String, imageData: Data) -> String? {
         
-        // Create filePath URL by appending final path component (name of image)
-        let filePath = documentsURL.appendingPathComponent("\(name).gif")
+        let fileName = "\(name).gif"
+        let filePath = storageURL.appendingPathComponent(fileName)
         
         do {
             try imageData.write(to: filePath, options: .atomic)
-            return filePath.path
+            return fileName
         } catch {
             print("couldn't write image")
             // TODO: Treat error (Maybe, not enough space?)
@@ -75,4 +83,32 @@ class PersistGif {
         
         return nil
     }
+    
+    func imagePath(fileName: String, keepExtension: Bool = true) -> String? {
+        
+        let fileURL = storageURL.appendingPathComponent("\(fileName)")
+        
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            if !keepExtension {
+                return fileURL.deletingPathExtension().path
+            }
+            
+            return fileURL.path
+        }
+        
+        return nil
+    }
+    
+    func imageData(forFileName fileName: String) -> Data? {
+        
+        let filePath = storageURL.appendingPathComponent("\(fileName)").path
+        
+        if FileManager.default.fileExists(atPath: filePath) {
+            return FileManager.default.contents(atPath: filePath)
+        }
+        
+        return nil
+    }
+
+
 }

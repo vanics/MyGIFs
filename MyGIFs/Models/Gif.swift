@@ -37,7 +37,9 @@ struct Gif: Mappable {
             return nil
         }
         
-        isFavorite = isSaved()
+        if let id = map.JSON["id"] as? String {
+            isFavorite = MyGifsCoreData.shared.retrieveById(id)
+        }
     }
     
     mutating func mapping(map: Map) {

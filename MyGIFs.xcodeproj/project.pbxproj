@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2084450D201C0AED00D1BF74 /* FeedManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2084450C201C0AED00D1BF74 /* FeedManager.swift */; };
+		2084450F201C516400D1BF74 /* FluidCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2084450E201C516300D1BF74 /* FluidCollectionViewLayout.swift */; };
 		20F1EBC62019458C00C54341 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EBC52019458C00C54341 /* AppDelegate.swift */; };
-		20F1EBC82019458C00C54341 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EBC72019458C00C54341 /* ViewController.swift */; };
 		20F1EBCB2019458D00C54341 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20F1EBC92019458D00C54341 /* Main.storyboard */; };
 		20F1EBCE2019458D00C54341 /* MyGIFs.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EBCC2019458D00C54341 /* MyGIFs.xcdatamodeld */; };
 		20F1EBD02019458D00C54341 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20F1EBCF2019458D00C54341 /* Assets.xcassets */; };
@@ -28,18 +29,21 @@
 		20F1EC07201AD77B00C54341 /* FavoritesVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EC06201AD77B00C54341 /* FavoritesVM.swift */; };
 		20F1EC09201AD92000C54341 /* MyGifsCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EC08201AD92000C54341 /* MyGifsCoreData.swift */; };
 		20F1EC0B201AFD9E00C54341 /* FavoriteCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EC0A201AFD9E00C54341 /* FavoriteCVCell.swift */; };
-		20F1EC0D201B081600C54341 /* FavoritedCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20F1EC0C201B081600C54341 /* FavoritedCVCell.xib */; };
+		20F1EC0D201B081600C54341 /* FavoriteCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 20F1EC0C201B081600C54341 /* FavoriteCVCell.xib */; };
 		20F1EC0F201B0C4800C54341 /* Calculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EC0E201B0C4800C54341 /* Calculation.swift */; };
 		20F1EC11201B1A9500C54341 /* PersistGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EC10201B1A9500C54341 /* PersistGif.swift */; };
+		20F1EC15201BF79500C54341 /* NoItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EC14201BF79500C54341 /* NoItemsView.swift */; };
+		20F1EC17201BFC4C00C54341 /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1EC16201BFC4C00C54341 /* UIView+Ext.swift */; };
 		58DBB20FFB711387B19F6049 /* Pods_MyGIFs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7419CD5DE27CD0E2DDDC87FE /* Pods_MyGIFs.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		023ACF43081AB519686009A9 /* Pods-MyGIFs.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyGIFs.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyGIFs/Pods-MyGIFs.release.xcconfig"; sourceTree = "<group>"; };
 		11B653F22D826B0A59E977AA /* Pods-MyGIFs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyGIFs.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyGIFs/Pods-MyGIFs.debug.xcconfig"; sourceTree = "<group>"; };
+		2084450C201C0AED00D1BF74 /* FeedManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedManager.swift; sourceTree = "<group>"; };
+		2084450E201C516300D1BF74 /* FluidCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluidCollectionViewLayout.swift; sourceTree = "<group>"; };
 		20F1EBC22019458C00C54341 /* MyGIFs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGIFs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20F1EBC52019458C00C54341 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		20F1EBC72019458C00C54341 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		20F1EBCA2019458D00C54341 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		20F1EBCD2019458D00C54341 /* MyGIFs.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyGIFs.xcdatamodel; sourceTree = "<group>"; };
 		20F1EBCF2019458D00C54341 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -60,9 +64,11 @@
 		20F1EC06201AD77B00C54341 /* FavoritesVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesVM.swift; sourceTree = "<group>"; };
 		20F1EC08201AD92000C54341 /* MyGifsCoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGifsCoreData.swift; sourceTree = "<group>"; };
 		20F1EC0A201AFD9E00C54341 /* FavoriteCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCVCell.swift; sourceTree = "<group>"; };
-		20F1EC0C201B081600C54341 /* FavoritedCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FavoritedCVCell.xib; sourceTree = "<group>"; };
+		20F1EC0C201B081600C54341 /* FavoriteCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FavoriteCVCell.xib; sourceTree = "<group>"; };
 		20F1EC0E201B0C4800C54341 /* Calculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calculation.swift; sourceTree = "<group>"; };
 		20F1EC10201B1A9500C54341 /* PersistGif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistGif.swift; sourceTree = "<group>"; };
+		20F1EC14201BF79500C54341 /* NoItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NoItemsView.swift; path = MyGIFs/Views/NoItemsView.swift; sourceTree = SOURCE_ROOT; };
+		20F1EC16201BFC4C00C54341 /* UIView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
 		7419CD5DE27CD0E2DDDC87FE /* Pods_MyGIFs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MyGIFs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -121,7 +127,6 @@
 				20F1EBF82019B72200C54341 /* DefaultNavigationVC.swift */,
 				20F1EBE82019842500C54341 /* FeedTVC.swift */,
 				20F1EBEA2019849600C54341 /* FavoritesCVC.swift */,
-				20F1EBC72019458C00C54341 /* ViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -138,6 +143,7 @@
 		20F1EBDC20195D9000C54341 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				20F1EC14201BF79500C54341 /* NoItemsView.swift */,
 				20F1EBEC201989C000C54341 /* Cells */,
 			);
 			path = Views;
@@ -147,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				20F1EBFE201A5F3500C54341 /* UIViewController+Ext.swift */,
+				20F1EC16201BFC4C00C54341 /* UIView+Ext.swift */,
 				20F1EC00201A81BE00C54341 /* UIColor+Ext.swift */,
 			);
 			path = "Extensions+Protocols";
@@ -183,6 +190,7 @@
 		20F1EBE520195EC400C54341 /* Util+Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				2084450E201C516300D1BF74 /* FluidCollectionViewLayout.swift */,
 				20F1EC0E201B0C4800C54341 /* Calculation.swift */,
 				20F1EC10201B1A9500C54341 /* PersistGif.swift */,
 			);
@@ -193,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				20F1EBF42019A9D700C54341 /* GiphyAPIService.swift */,
+				2084450C201C0AED00D1BF74 /* FeedManager.swift */,
 				20F1EC08201AD92000C54341 /* MyGifsCoreData.swift */,
 				20F1EBF62019AB5C00C54341 /* Networking.swift */,
 			);
@@ -204,7 +213,7 @@
 			children = (
 				20F1EBFC201A3EC000C54341 /* FeedTVCell.swift */,
 				20F1EC0A201AFD9E00C54341 /* FavoriteCVCell.swift */,
-				20F1EC0C201B081600C54341 /* FavoritedCVCell.xib */,
+				20F1EC0C201B081600C54341 /* FavoriteCVCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -297,7 +306,7 @@
 			files = (
 				20F1EBD32019458D00C54341 /* LaunchScreen.storyboard in Resources */,
 				20F1EBD02019458D00C54341 /* Assets.xcassets in Resources */,
-				20F1EC0D201B081600C54341 /* FavoritedCVCell.xib in Resources */,
+				20F1EC0D201B081600C54341 /* FavoriteCVCell.xib in Resources */,
 				20F1EBCB2019458D00C54341 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -380,16 +389,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				20F1EC11201B1A9500C54341 /* PersistGif.swift in Sources */,
-				20F1EBC82019458C00C54341 /* ViewController.swift in Sources */,
 				20F1EBFF201A5F3500C54341 /* UIViewController+Ext.swift in Sources */,
 				20F1EC07201AD77B00C54341 /* FavoritesVM.swift in Sources */,
+				2084450F201C516400D1BF74 /* FluidCollectionViewLayout.swift in Sources */,
 				20F1EBFD201A3EC000C54341 /* FeedTVCell.swift in Sources */,
+				20F1EC15201BF79500C54341 /* NoItemsView.swift in Sources */,
 				20F1EBFB2019BCC400C54341 /* GifSize.swift in Sources */,
 				20F1EBF020199ACE00C54341 /* Gif.swift in Sources */,
 				20F1EC05201AD75200C54341 /* FeedVM.swift in Sources */,
 				20F1EBF92019B72200C54341 /* DefaultNavigationVC.swift in Sources */,
+				2084450D201C0AED00D1BF74 /* FeedManager.swift in Sources */,
 				20F1EBC62019458C00C54341 /* AppDelegate.swift in Sources */,
 				20F1EC01201A81BE00C54341 /* UIColor+Ext.swift in Sources */,
+				20F1EC17201BFC4C00C54341 /* UIView+Ext.swift in Sources */,
 				20F1EBF72019AB5C00C54341 /* Networking.swift in Sources */,
 				20F1EBEB2019849600C54341 /* FavoritesCVC.swift in Sources */,
 				20F1EC0B201AFD9E00C54341 /* FavoriteCVCell.swift in Sources */,
@@ -544,7 +556,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vanics.MyGIFs;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -561,7 +573,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.vanics.MyGIFs;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
