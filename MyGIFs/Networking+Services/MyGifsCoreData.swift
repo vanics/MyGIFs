@@ -6,7 +6,7 @@
 //  Copyright © 2018 vanics. All rights reserved.
 //
 
-import Foundation
+import UIKit // For UIApplication
 import CoreData
 
 enum CoreDataError: String {
@@ -18,16 +18,28 @@ class MyGifsCoreData {
     static let shared = MyGifsCoreData()
     static let entityName = "LocalGif"
     
-    var managedContext: NSManagedObjectContext?
+    private let persistentContainer: NSPersistentContainer!
 
-    private init () {}
+    var managedContext: NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
+    
+    lazy var backgroundContext: NSManagedObjectContext = {
+        return persistentContainer.newBackgroundContext()
+    }()
+    
+    private init () {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            fatalError("Cannot get shared APP delegate")
+        }
+        persistentContainer = appDelegate.persistentContainer
+        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
+
+    }
     
     // MARK: Public Interface
     
     func retrieveById(_ id: String) -> Bool {
-        guard let managedContext = managedContext else {
-            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
-        }
         
         // TODO: Run it async
         
@@ -51,10 +63,6 @@ class MyGifsCoreData {
     }
     
     func fetchAll() -> [LocalGif] {
-        guard let managedContext = managedContext else {
-            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
-        }
-        
         do {
             return try managedContext.fetch(LocalGif.fetchRequest())
 
@@ -65,14 +73,14 @@ class MyGifsCoreData {
         return []
     }
     
-    func saveNewItem(_ item: Gif, imagePath: String) {
-        guard let managedContext = managedContext else {
-            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
-        }
+    func insertItem(_ item: Gif, imagePath: String) {
         
         // TODO: Run it async
 
-        let newGif = LocalGif(context: managedContext)
+        guard let newGif = NSEntityDescription.insertNewObject(forEntityName: MyGifsCoreData.entityName, into: backgroundContext) as? LocalGif else {
+            return
+        }
+        
         newGif.id = item.id
         newGif.title = item.title
         newGif.bitlyGifUrl = item.bitlyGifUrl
@@ -85,27 +93,24 @@ class MyGifsCoreData {
         newGif.username = item.username
         
         do {
-            try managedContext.save()
+            try backgroundContext.save()
         } catch let error as NSError {
             print("Could not save \(error), \(error.userInfo)")
         }
     }
     
     func deleteById(_ id: String) -> Bool {
-        guard let managedContext = managedContext else {
-            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
-        }
         
-        let request = NSFetchRequest<LocalGif>(entityName: "LocalGif")
+        let request = NSFetchRequest<LocalGif>(entityName: MyGifsCoreData.entityName)
         let predicate = NSPredicate(format: "id == %@", id)
         request.predicate = predicate
         
-        if let result = try? managedContext.fetch(request) {
+        if let result = try? backgroundContext.fetch(request) {
             var deletes = 0
 
             for object in result {
-                managedContext.delete(object)
-                try? managedContext.save()
+                backgroundContext.delete(object)
+                try? backgroundContext.save()
                 deletes += 1
             }
             
@@ -118,13 +123,19 @@ class MyGifsCoreData {
     }
     
     func deleteByObject(_ object: LocalGif) -> Bool {
-        guard let managedContext = managedContext else {
-            fatalError(CoreDataError.managedContextNotLoaded.rawValue)
-        }
-        
         managedContext.delete(object)
         try? managedContext.save()
         
         return true
+    }
+    
+    func saveContext() {
+        if backgroundContext.hasChanges {
+            do {
+                try backgroundContext.save()
+            } catch {
+                print("Save error \(error)")
+            }
+        }
     }
 }
