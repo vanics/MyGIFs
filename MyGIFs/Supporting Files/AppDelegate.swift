@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Kingfisher
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,12 +20,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Global UI Changes
         UIApplication.shared.statusBarStyle = .lightContent
 
+        setupImageCaching()
+
         // Depedency injection to pass the NSManagedObjectContext
         // The messy way would be to direclty call appDelegate.persistentContainer.viewContext
-        // Other possibility would be Singleton
+        // Other possibility would be Singleton which I'm adoping now.
         // let tabBarController = window!.rootViewController as! UITabBarController
-        MyGifsCoreData.shared.managedContext = persistentContainer.viewContext
-            
+        // MyGifsCoreData.shared.managedContext = persistentContainer.viewContext
+        
         // Temporary UI Definition
         UITabBar.appearance().tintColor = UIColor.white
         UITabBar.appearance().barTintColor = UIColor.black
@@ -54,6 +57,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
+    }
+    
+    // MARK: - Image Caching and Related
+    
+    func setupImageCaching() {
+        ImageCache.default.maxDiskCacheSize = 100 * 1024 * 1024 // 50 MB
+        // Default cache stores it for up to one week
     }
 
     // MARK: - Core Data stack
