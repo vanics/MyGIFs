@@ -43,7 +43,7 @@ class FeedTVCell: UITableViewCell {
         }
     }
     
-    // MARK: - Cell Life Cycle
+    // MARK: - Cell Lifecycle
     
     override func awakeFromNib() {
         super.awakeFromNib()

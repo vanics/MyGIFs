@@ -9,6 +9,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
+import RxDataSources
 import ObjectMapper
 import Kingfisher
 
@@ -22,11 +23,12 @@ class FeedTVC: UITableViewController {
     // searching to display the results
     private let searchController = UISearchController(searchResultsController: nil)
     private let disposeBag = DisposeBag()
-    private lazy var feedManager = FeedManager()
-    private var largeGifSelectionIndexPath: IndexPath?
     
     // MARK: - Config
     static let minimumDistanceToTriggerFeedManagerLoad: CGFloat = 1000
+
+    // TODO: Inject it on the init
+    lazy var viewModel: FeedViewModel = FeedViewModel()
     
     // MARK: - Some UI Setup
     lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -36,16 +38,20 @@ class FeedTVC: UITableViewController {
         return loading
     }()
     
-    // MARK: - View Life Cycle
+    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupImageCaching()
         setupSearchController()
         
         tableView.backgroundView = loadingIndicator
         tableView.alwaysBounceVertical = true
+        
+//        let data = viewModel.items
+//            data.bind(to: tableView.rx.items(cellIdentifier: Identifiers.FeedTVCell, cellType: FeedTVCell.self)) {
+//                
+//            }
         
         loadDynamicData()
     }
@@ -55,7 +61,7 @@ class FeedTVC: UITableViewController {
     func loadDynamicData() {
         loadingIndicator.startAnimating()
 
-        feedManager.retrieveGifs { [weak self] (updated, previousItemsCount, error) in
+        viewModel.retrieveData { [weak self] (updated, previousItemsCount, error) in
             self?.loadingIndicator.stopAnimating()
             
             if let error = error {
@@ -64,7 +70,7 @@ class FeedTVC: UITableViewController {
             }
             
             if updated {
-                self?.updateTableView(currentItemsCount: self!.feedManager.gifs.count, previousItemCount: previousItemsCount)
+                self?.updateTableView(currentItemsCount: self!.viewModel.numberOfRowsInSection(0), previousItemCount: previousItemsCount)
             }
         }
     }
@@ -76,51 +82,27 @@ class FeedTVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return feedManager.gifs.count
+        return viewModel.numberOfRowsInSection(section)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.FeedTVCell, for: indexPath) as! FeedTVCell
         
         // Configure the cell...
-        cell.setupCell(delegate: self, gif: feedManager.gifs[indexPath.row])
+        cell.setupCell(delegate: self, gif: viewModel.cellForIndexPath(indexPath))
 
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var indexPathsForUpdate = [indexPath]
-        
-        if let oldSelectedIndexPath = largeGifSelectionIndexPath,
-            indexPath != oldSelectedIndexPath {
-            indexPathsForUpdate.append(oldSelectedIndexPath)
-        }
-        
-        // It's the same as the previous which means we should unselect it.
-        if indexPath == largeGifSelectionIndexPath {
-            largeGifSelectionIndexPath = nil
-        } else {
-            largeGifSelectionIndexPath = indexPath
-        }
-        
-        updateRowAt(indexPaths: indexPathsForUpdate)
+        viewModel.selectRowAtIndexPath(indexPath)
+        updateRowAt(indexPaths: viewModel.indexPathsForUpdate)
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath == largeGifSelectionIndexPath,
-            let height = feedManager.gifs[indexPath.row].fixedWidth?.heightForWidth(view.frame.width) {
-            return height
-        } else {
-            return 150
-        }
+        return CGFloat(viewModel.heightForRowAtIndexPath(indexPath, withAvailableWidth: Float(view.frame.width)))
     }
-    
-    // MARK: - Image Caching and Related
-    
-    func setupImageCaching() {
-        ImageCache.default.maxDiskCacheSize = 100 * 1024 * 1024 // 50 MB
-        // Default cache stores it for up to one week
-    }
+
     
     // MARK: - UIScrollView / Infinite Scrolling
     
@@ -180,7 +162,7 @@ class FeedTVC: UITableViewController {
 extension FeedTVC: FeedActionsDelegate {
     func addFavorite(item: Gif, imageData: Data) {
         if let imagePath = PersistGif.shared.storeLocalImage(name: item.id, imageData: imageData) {
-            MyGifsCoreData.shared.saveNewItem(item, imagePath: imagePath)
+            MyGifsCoreData.shared.insertItem(item, imagePath: imagePath)
         }
     }
     
@@ -200,10 +182,12 @@ extension FeedTVC: FeedActionsDelegate {
 extension FeedTVC: UISearchResultsUpdating {
     // MARK: - UISearchResultsUpdating Delegate
     
+    // Another option would be have used RxCocoa to bind the search bar
+    // instead of using the UISearchResultsUpdating
     func updateSearchResults(for searchController: UISearchController) {
-        feedManager.query = searchController.searchBar.text ?? ""
+        viewModel.searchQuery.value = searchController.searchBar.text ?? ""
         tableView.reloadData() // DataSource Changed due query change
-        loadDynamicData() // LoadData for new query || Will be RxSwift like later
+        //loadDynamicData() // LoadData for new query || Will be RxSwift like later
     }
     
     // MARK: - Setup Search Controller

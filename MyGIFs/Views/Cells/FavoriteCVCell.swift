@@ -47,7 +47,7 @@ class FavoriteCVCell: UICollectionViewCell {
     
     private weak var favoriteActionsDelegate: FavoriteActionsDelegate?
     
-    // MARK: - Cell Life Cycle
+    // MARK: - Cell Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
         setupButtons()
