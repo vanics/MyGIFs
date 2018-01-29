@@ -20,23 +20,36 @@ class FeedManager {
 
     private let disposeBag = DisposeBag()
 
-    private var loadingData = false
     private(set) var totalItem = 0
     private(set) var currentOffset = 0
     private(set) static var limit = 30
     private(set) var isLoading = false
 
     // MARK: - Attributes
-    var query: String = "" {
-        didSet {
-            if oldValue != query {
-                cleanTracking()
-            }
-        }
+//    var query: String = "" {
+//        didSet {
+//            if oldValue != query {
+//                cleanTracking()
+//            }
+//        }
+//    }
+    
+    var query = Variable<String>("")
+    
+    private(set) var gifs = Variable<[Gif]>([])
+
+    init() {
+        // Setup Query Reactivity
+        query.asObservable()
+            .distinctUntilChanged()
+            .throttle(0.2, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] text in
+                self.cleanTracking()
+                self.retrieveSearch(onCompletion: nil)
+            })
+            .disposed(by: disposeBag)
     }
     
-    private(set) var gifs = [Gif]()
-
     // MARK: - Public Interface
     
     func retrieveGifs(onCompletion: Completion?) {
@@ -46,7 +59,7 @@ class FeedManager {
         
         // TODO: Run in Serial thread
 
-        if query.isEmpty {
+        if query.value.isEmpty {
             retrieveFeed(onCompletion: onCompletion)
         } else {
             retrieveSearch(onCompletion: onCompletion)
@@ -58,15 +71,15 @@ class FeedManager {
     func cleanTracking() {
         totalItem = 0
         currentOffset = 0
-        loadingData = false
-        gifs = []
+
+        gifs.value = []
     }
     
     // MARK: - Private Interface
     
     private func retrieveSearch(onCompletion: Completion?) {
         GiphyProvider.rx.request(
-            .search(value: query, limit: FeedManager.limit, offset: currentOffset))
+            .search(value: query.value, limit: FeedManager.limit, offset: currentOffset))
             .mapJSON() // .mapArray(Gif.self)
             .subscribe { [weak self] (event) in
                 // This is in the main thread
@@ -112,10 +125,10 @@ class FeedManager {
                 var previousItemsCount: Int?
 
                 if offset != 0 {
-                    previousItemsCount = self.gifs.count
+                    previousItemsCount = self.gifs.value.count
                 }
                 
-                self.gifs.append(contentsOf: gifs)
+                self.gifs.value.append(contentsOf: gifs)
                 
                 onCompletion?(true, previousItemsCount, nil)
             } else {

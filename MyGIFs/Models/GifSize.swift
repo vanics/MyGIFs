@@ -42,14 +42,6 @@ struct GifSize: Mappable {
         height <- (map["height"], transform)
         size <- (map["size"], transform)
     }
-    
-    func heightForWidth(_ targetWidth: CGFloat) -> CGFloat {
-        return Calculation.heightForWidth(
-            targetWidth,
-            originalWidth: width!,
-            originalHeight: height!
-        )
-    }
 }
 
 // Util Transformer to convert String into Float

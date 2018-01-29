@@ -26,14 +26,15 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     
     private var noItemsView = NoItemsView()
     
-    // TODO: Manage it better in the VC Life Cycle
-    private var gifs: [LocalGif] = []
+    private var viewModel: FavoritesViewModel!
     
-    // MARK: - View Life Cycle
+    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        viewModel = FavoritesViewModel()
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         fluidCollectionViewLayout.delegate = self
@@ -49,7 +50,7 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        gifs = MyGifsCoreData.shared.fetchAll()
+        viewModel.loadData()
         collectionView.reloadData()
     }
 
@@ -60,7 +61,7 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let numOfGifs = gifs.count
+        let numOfGifs = viewModel.numberOfRowsInSection(section)
         
         if numOfGifs > 0 {
             collectionView.backgroundView = nil
@@ -75,7 +76,7 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Identifiers.FavoriteCVCell, for: indexPath) as! FavoriteCVCell
         
         // Configure the cell
-        cell.setupCell(delegate: self, localGif: gifs[indexPath.row], gifLevelOfIntegrity: gifLevelOfIntegrity)
+        cell.setupCell(delegate: self, localGif: viewModel.cellForIndexPath(indexPath), gifLevelOfIntegrity: gifLevelOfIntegrity)
         
         return cell
     }
@@ -83,15 +84,12 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     // MARK: - FluidLayoutDelegate
     
     func collectionView(collectionView: UICollectionView, heightForCellAtIndexPath indexPath: IndexPath, width: CGFloat) -> CGFloat {
-        let localGif = gifs[indexPath.row]
         
-        let widthForCell = fluidCollectionViewLayout.cellWidth
+        let widthForCell = Float(fluidCollectionViewLayout.cellWidth)
+        let heightForCell = viewModel.heightForCellAtIndexPath(indexPath, withAvailableWidth: widthForCell)
         
-        let heightForCell = Calculation.heightForWidth(widthForCell, originalWidth: localGif.localImageWidth, originalHeight: localGif.localImageHeight)
-        
-        return heightForCell
+        return CGFloat(heightForCell)
     }
-    
 
     /*
      // MARK: - Navigation
@@ -111,20 +109,11 @@ extension FavoritesCVC: FavoriteActionsDelegate {
     }
     
     func deleteFavorite(forCell cell: FavoriteCVCell) {
-        guard let object = cell.localGif,
-            let localImageFileName = object.localImageFileName,
-            let indexPath = collectionView.indexPath(for: cell) else {
-            return
+        if let indexPath = collectionView.indexPath(for: cell),
+            viewModel.deleteFavorite(forCell: cell, at: indexPath) {
+            collectionView.performBatchUpdates({
+                collectionView.deleteItems(at: [indexPath])
+            })
         }
-        
-        if MyGifsCoreData.shared.deleteByObject(object) {
-            _ = PersistGif.shared.removeImage(fileName: "\(localImageFileName)")
-        }
-        
-        gifs.remove(at: indexPath.row)
-        
-        collectionView.performBatchUpdates({
-            collectionView.deleteItems(at: [indexPath])
-        })
     }
 }

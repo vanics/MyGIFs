@@ -10,9 +10,9 @@ import UIKit
 
 enum Calculation {
     
-    static func heightForWidth(_ targetWidth: CGFloat, originalWidth: Float, originalHeight: Float) -> CGFloat {
-        let scaleFactor  = targetWidth / CGFloat(originalWidth)
-        let newHeight  = CGFloat(originalHeight) * scaleFactor
+    static func heightForWidth(_ targetWidth: Float, originalWidth: Float, originalHeight: Float) -> Float {
+        let scaleFactor  = targetWidth / originalWidth
+        let newHeight  = originalHeight * scaleFactor
         return newHeight
     }
 }
