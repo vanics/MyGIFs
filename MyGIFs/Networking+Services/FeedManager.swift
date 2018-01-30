@@ -16,93 +16,98 @@ enum FeedManagerType {
 
 class FeedManager {
     
-    typealias Completion = ((_ updated: Bool, _ partialUpdated: Int?, _ error: String?) -> Void)
-
     private let disposeBag = DisposeBag()
-
-    private(set) var totalItem = 0
+    
+    private var isLoading = false
+    private(set) var totalItems = 0
     private(set) var currentOffset = 0
     private(set) static var limit = 30
-    private(set) var isLoading = false
+    private(set) var noMoreItems = false
 
-    // MARK: - Attributes
-//    var query: String = "" {
-//        didSet {
-//            if oldValue != query {
-//                cleanTracking()
-//            }
-//        }
-//    }
+    // MARK: - Attributes / Output
+    private(set) var error = PublishSubject<String>()
+
+    private(set) var showLoading = Variable<Bool>(false)
+    private(set) var isEmpty = Variable<Bool>(false)
     
+    //private(set) 
+    var gifs = Variable<[Gif]>([])
+
     var query = Variable<String>("")
-    
-    private(set) var gifs = Variable<[Gif]>([])
 
+    // MARK: - Initial Setup
     init() {
-        // Setup Query Reactivity
+        // Setup Query Reactivity ;)
         query.asObservable()
             .distinctUntilChanged()
-            .throttle(0.2, scheduler: MainScheduler.instance)
             .subscribe(onNext: { [unowned self] text in
                 self.cleanTracking()
-                self.retrieveSearch(onCompletion: nil)
+                self.retrieveGifs()
             })
             .disposed(by: disposeBag)
     }
     
     // MARK: - Public Interface
     
-    func retrieveGifs(onCompletion: Completion?) {
-        guard !isLoading else {
+    func retrieveGifs() {
+        guard !isLoading && !noMoreItems else {
             return
         }
         
-        // TODO: Run in Serial thread
-
-        if query.value.isEmpty {
-            retrieveFeed(onCompletion: onCompletion)
-        } else {
-            retrieveSearch(onCompletion: onCompletion)
+        isLoading = true
+        isEmpty.value = false // It's loading. Doesn't define the empty state just yet.
+        
+        if gifs.value.isEmpty {
+            showLoading.value = true
         }
         
-        isLoading = true
+        // TODO: Run in Serial thread
+        
+        if query.value.isEmpty {
+            retrieveFeed()
+        } else {
+            retrieveSearch()
+        }
     }
     
     func cleanTracking() {
-        totalItem = 0
+        totalItems = 0
         currentOffset = 0
-
+        noMoreItems = false
+        
         gifs.value = []
     }
     
     // MARK: - Private Interface
     
-    private func retrieveSearch(onCompletion: Completion?) {
+    private func retrieveSearch() {
         GiphyProvider.rx.request(
             .search(value: query.value, limit: FeedManager.limit, offset: currentOffset))
             .mapJSON() // .mapArray(Gif.self)
             .subscribe { [weak self] (event) in
                 // This is in the main thread
-                self?.parseEventReturn(event: event, onCompletion: onCompletion)
+                self?.parseEventReturn(event: event)
+                self?.isLoading = false
+                self?.showLoading.value = false
             }
             .disposed(by: disposeBag)
     }
     
-    private func retrieveFeed(onCompletion: Completion?) {
+    private func retrieveFeed() {
         GiphyProvider.rx.request(
             .trending(limit: FeedManager.limit, offset: currentOffset))
             .mapJSON()
             .subscribe { [weak self] (event) in
                 // This is in the main thread
-                self?.parseEventReturn(event: event, onCompletion: onCompletion)
+                self?.parseEventReturn(event: event)
+                self?.isLoading = false
+                self?.showLoading.value = false
             }
             .disposed(by: disposeBag)
     }
     
-    private func parseEventReturn(event: SingleEvent<Any>, onCompletion: Completion?) {
+    private func parseEventReturn(event: SingleEvent<Any>) {
 
-        isLoading = false
-        
         switch event {
         case .success(let response):
             if let jsonDict = response as? NSDictionary,
@@ -113,29 +118,44 @@ class FeedManager {
                 let totalCount = paginationDict["total_count"] as? Int,
                 let gifs = Mapper<Gif>().mapArray(JSONObject: jsonData) {
                 
-                // For some reason the limit wasn't correctly set, use the returned then
-                if count != FeedManager.limit {
-                    FeedManager.limit = count
+                if count < FeedManager.limit {
+                    noMoreItems = true
                 }
                 
-                totalItem = totalCount
-                
+                totalItems = totalCount
                 currentOffset = offset + FeedManager.limit
                 
-                var previousItemsCount: Int?
-
-                if offset != 0 {
-                    previousItemsCount = self.gifs.value.count
-                }
-                
                 self.gifs.value.append(contentsOf: gifs)
+                isEmpty.value = gifs.isEmpty // isEmpty by any chance?
                 
-                onCompletion?(true, previousItemsCount, nil)
             } else {
-                onCompletion?(false, nil, "Error parsing data")
+                error.on(.next("Error parsing data"))
+                //onCompletion?(false, nil, "Error parsing data")
             }
-        case .error(let error):
-            onCompletion?(false, nil, error.localizedDescription)
+        case .error(let requestError):
+            error.on(.next(requestError.localizedDescription))
         }
     }
 }
+
+//fileprivate extension ObserverType {
+//    typealias Event = SingleEvent<Any>
+//    func mapEventReturn<Event>(transform: @escaping (E) -> Event) -> Observable<Event> {
+//        return Observable.create { observer in
+//            let subscription = .subscribe { e in
+//                switch e {
+//                case .next(let value):
+//                    let result = transform(value)
+//                    observer.on(.next(result))
+//                case .error(let error):
+//                    observer.on(.error(error))
+//                case .completed:
+//                    observer.on(.completed)
+//                }
+//            }
+//
+//            return subscription
+//        }
+//    }
+//}
+

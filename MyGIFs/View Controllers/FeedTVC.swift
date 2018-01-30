@@ -9,7 +9,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
-import RxDataSources
+//import RxDataSources
 import ObjectMapper
 import Kingfisher
 
@@ -31,7 +31,14 @@ class FeedTVC: UITableViewController {
     lazy var viewModel: FeedViewModel = FeedViewModel()
     
     // MARK: - Some UI Setup
-    lazy var loadingIndicator: UIActivityIndicatorView = {
+
+    private lazy var messageView: NoItemsView = {
+        let noItems = NoItemsView()
+        noItems.textMessage = "No items found for the entered parameter."
+        return noItems
+    }()
+
+    private lazy var loadingIndicator: UIActivityIndicatorView =  {
         let loading = UIActivityIndicatorView()
         loading.hidesWhenStopped = true
         loading.tintColor = UIColor.white
@@ -48,52 +55,57 @@ class FeedTVC: UITableViewController {
         tableView.backgroundView = loadingIndicator
         tableView.alwaysBounceVertical = true
         
-//        let data = viewModel.items
-//            data.bind(to: tableView.rx.items(cellIdentifier: Identifiers.FeedTVCell, cellType: FeedTVCell.self)) {
-//                
-//            }
+        // Using RxSwift instead
+        tableView.dataSource = nil
+        tableView.dataSource = nil
         
-        loadDynamicData()
+        rxSetupBindings()
+        viewModel.retrieveFeed()
     }
     
-    // MARK: - Feed Manager
+    // MARK: - RxSwift Setup
     
-    func loadDynamicData() {
-        loadingIndicator.startAnimating()
+    func rxSetupBindings() {
 
-        viewModel.retrieveData { [weak self] (updated, previousItemsCount, error) in
-            self?.loadingIndicator.stopAnimating()
-            
-            if let error = error {
+        // MARK: - Data Source
+        viewModel.items.bind(to: tableView.rx.items(cellIdentifier: Identifiers.FeedTVCell, cellType: FeedTVCell.self)) { _, model, cell in
+            cell.setupCell(delegate: self, gif: model)
+            }
+            .disposed(by: disposeBag)
+        
+        // Show Loading
+        viewModel.showLoading.asObservable()
+            .subscribe(onNext: { [weak self] showLoading in
+                if showLoading {
+                    self?.loadingIndicator.startAnimating()
+                } else {
+                    self?.loadingIndicator.stopAnimating()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        // Change background view accordingly to the loading status
+        viewModel.isEmpty.asObservable()
+            .subscribe (onNext: { [weak self] isEmpty in
+                if isEmpty {
+                    self?.tableView.backgroundView = self!.messageView
+                } else {
+                    self?.tableView.backgroundView = self!.loadingIndicator
+                }
+            })
+            .disposed(by: disposeBag)
+
+        // Error
+        viewModel.onError.asObservable()
+            .subscribe(onNext: { [weak self] error in
                 self?.showAlert(title: "Error", message: error)
-                return
-            }
-            
-            if updated {
-                self?.updateTableView(currentItemsCount: self!.viewModel.numberOfRowsInSection(0), previousItemCount: previousItemsCount)
-            }
-        }
-    }
-
-    // MARK: - Table view data source
-    
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.numberOfRowsInSection(section)
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.FeedTVCell, for: indexPath) as! FeedTVCell
-        
-        // Configure the cell...
-        cell.setupCell(delegate: self, gif: viewModel.cellForIndexPath(indexPath))
-
-        return cell
+            })
+            .disposed(by: disposeBag)
     }
     
+    // MARK: - Table View Delegates
+    // Could also have used rxSwift instead
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.selectRowAtIndexPath(indexPath)
         updateRowAt(indexPaths: viewModel.indexPathsForUpdate)
@@ -103,7 +115,6 @@ class FeedTVC: UITableViewController {
         return CGFloat(viewModel.heightForRowAtIndexPath(indexPath, withAvailableWidth: Float(view.frame.width)))
     }
 
-    
     // MARK: - UIScrollView / Infinite Scrolling
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -114,40 +125,13 @@ class FeedTVC: UITableViewController {
         
         // Set the minimum distance from bottom to load more posts
         if distanceFromBottom <= FeedTVC.minimumDistanceToTriggerFeedManagerLoad {
-            loadDynamicData()
+            viewModel.retrieveFeed()
         }
     }
     
     // MARK: - Release Keyboard if user interact with scrollView
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         searchController.searchBar.resignFirstResponder()
-    }
-    
-    // MARK: - Add items without reloading the tableView (More fluid experience)
-    func updateTableView(currentItemsCount: Int, previousItemCount: Int?) {
-        
-        guard let previousItemCount = previousItemCount, currentItemsCount > previousItemCount else {
-            tableView.reloadData()
-            return
-        }
-        
-        var indexPaths = [IndexPath]()
-
-        for nextIndex in previousItemCount..<currentItemsCount {
-            indexPaths.append(IndexPath(row: nextIndex, section: 0))
-        }
-        
-        // In order to avoid jumpy scrolling while adding new cells
-        let currentOffset = tableView.contentOffset
-        UIView.setAnimationsEnabled(false)
-        // -----
-        
-        tableView.beginUpdates()
-        tableView.insertRows(at: indexPaths, with: .none)
-        tableView.endUpdates()
-        
-        UIView.setAnimationsEnabled(true)
-        tableView.setContentOffset(currentOffset, animated: false)
     }
     
     // MARK: - Util
@@ -186,8 +170,6 @@ extension FeedTVC: UISearchResultsUpdating {
     // instead of using the UISearchResultsUpdating
     func updateSearchResults(for searchController: UISearchController) {
         viewModel.searchQuery.value = searchController.searchBar.text ?? ""
-        tableView.reloadData() // DataSource Changed due query change
-        //loadDynamicData() // LoadData for new query || Will be RxSwift like later
     }
     
     // MARK: - Setup Search Controller
@@ -195,7 +177,7 @@ extension FeedTVC: UISearchResultsUpdating {
     // Setup the Search Controller
     private func setupSearchController() {
         //navigationController?.hidesBarsOnSwipe = true
-        searchController.searchResultsUpdater = self
+        searchController.searchResultsUpdater = self // we will not use the UISearchResultsUpdating
         searchController.searchBar.placeholder = "Search GIFs"
         searchController.searchBar.barStyle = .black
         searchController.searchBar.tintColor = .white
@@ -213,11 +195,10 @@ extension FeedTVC: UISearchResultsUpdating {
             searchController.searchBar.searchBarStyle = .minimal
             
             // Include the search bar within the navigation bar.
+            //tableView.tableHeaderView = searchController.searchBar
             searchController.hidesNavigationBarDuringPresentation = false
             navigationItem.titleView = self.searchController.searchBar
             definesPresentationContext = false
-            
-            //tableView.tableHeaderView = searchController.searchBar
         }
         
         // Ensure that the search bar does not remain on screen if the user

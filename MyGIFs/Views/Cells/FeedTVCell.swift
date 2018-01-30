@@ -8,6 +8,7 @@
 
 import UIKit
 import Kingfisher
+import RxSwift
 
 protocol FeedActionsDelegate: class {
     func addFavorite(item: Gif, imageData: Data)
@@ -22,6 +23,8 @@ class FeedTVCell: UITableViewCell {
     
     private var isFavorite: Bool! // TODO: Remove it.
 
+    var disposeBag = DisposeBag()
+    
     // MARK: - Public Interface
     func setupCell(delegate: FeedActionsDelegate, gif: Gif) {
         self.feedActionsDelegate = delegate
@@ -53,6 +56,7 @@ class FeedTVCell: UITableViewCell {
         super.prepareForReuse()
         
         cancelImageDownloadTask()
+        disposeBag = DisposeBag()
     }
     
     // MARK: - Helpers

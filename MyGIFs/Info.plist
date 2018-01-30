@@ -43,5 +43,7 @@
 	<false/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>The app needs access to your photo library in order to save this GIF.</string>
 </dict>
 </plist>

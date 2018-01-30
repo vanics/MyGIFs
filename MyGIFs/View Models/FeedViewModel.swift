@@ -11,48 +11,46 @@ import RxSwift
 import RxCocoa
 
 class FeedViewModel {
-    let isLoading: Driver<Bool>
-    let isEmpty: Driver<Bool>
     
-    var items: Observable<[Gif]>
-    
-    private let isLoadingVariable = Variable(false)
-    private let isEmptyVariable = Variable(false)
-
     private var feedManager: FeedManager
     private let disposeBag = DisposeBag()
 
-    typealias Completion = ((_ updated: Bool, _ partialUpdated: Int?, _ error: String?) -> Void)
-
+    // MARK: - Attributes / Output
+    
+    /// showLoading is true always when the data source (items) was
+    /// cleared up and the Loading Indicator should be presented
+    let showLoading: Observable<Bool>
+    
+    let isEmpty: Observable<Bool>
+    let onError: Observable<String>
+    var items: Observable<[Gif]>
+    
     private var largeGifSelectionIndexPath: IndexPath?
     private let defaultHeight: Float = 150
     
+    /// Setting Search Query will also trigger data loading
     var searchQuery = Variable<String>("")
 
-    
     init() {
         // Initialize with Model if Any, in this case load Feed Manager
         feedManager = FeedManager()
         
-        // Reinforce private scope for mutability
-        items = feedManager.gifs.asObservable()
+        // Let's add some glue connecting the Feed Manager. ;)
+        showLoading = feedManager.showLoading.asObservable()
+        isEmpty = feedManager.isEmpty.asObservable()
+        onError = feedManager.error
         
-        isLoading = isLoadingVariable.asDriver()
-        isEmpty = isEmptyVariable.asDriver()
+        items = feedManager.gifs.asObservable().map{ $0 }
         
         searchQuery.asObservable()
             .bind(to: feedManager.query)
             .disposed(by: disposeBag)
+        // TODO: Binding will also send the value triggering an unnecessary
+        // retrieve, fix this later
     }
     
-    func retrieveData(onCompletion: Completion?) {
-        isLoadingVariable.value = true
-        feedManager.retrieveGifs { [weak self] (updated, previousItemsCount, error) in
-            onCompletion?(updated, previousItemsCount, error)
-//            let viewModels = people.map(PersonViewModelImp.init(person:))
-//            items.value += viewModels
-            self?.isLoadingVariable.value = false
-        }
+    func retrieveFeed() {
+        feedManager.retrieveGifs()
     }
     
     func heightForRowAtIndexPath(_ indexPath: IndexPath, withAvailableWidth availableWidth: Float) -> Float {
@@ -76,15 +74,6 @@ class FeedViewModel {
             originalWidth: originalWidth,
             originalHeight: originalHeight
         )
-    }
-
-    
-    func numberOfRowsInSection(_ section: Int) -> Int {
-        return feedManager.gifs.value.count
-    }
-    
-    func cellForIndexPath(_ indexPath: IndexPath) -> Gif {
-        return feedManager.gifs.value[indexPath.row]
     }
     
     var indexPathsForUpdate = [IndexPath]()
