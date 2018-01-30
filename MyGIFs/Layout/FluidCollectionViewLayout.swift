@@ -56,8 +56,6 @@ public class FluidCollectionViewLayout: UICollectionViewLayout {
         
         guard collectionView.numberOfSections > 0 else {
             //let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath as IndexPath)
-
-            
             return
         }
         
@@ -127,11 +125,11 @@ public class FluidCollectionViewLayout: UICollectionViewLayout {
             }
         }
         
-        if layoutAttributes.isEmpty {
-            let frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-            let insetFrame = frame.insetBy(dx: 0, dy: 0)
-
-        }
+//        if layoutAttributes.isEmpty {
+//            let frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+//            let insetFrame = frame.insetBy(dx: 0, dy: 0)
+//
+//        }
         
         return layoutAttributes
     }

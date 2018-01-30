@@ -47,12 +47,12 @@ class FavoritesCVC: UIViewController, UICollectionViewDelegate, UICollectionView
         //collectionView.collectionViewLayout = UICollectionViewFlowLayout()
         
         noItemsView.textMessage = "You haven't added any favorite GIF yet."
-
+        collectionView.backgroundView = noItemsView
+        
         // Register cell classes
         collectionView!.register(UINib(nibName: Identifiers.FavoriteCVCell, bundle: nil), forCellWithReuseIdentifier: Identifiers.FavoriteCVCell)
         
         collectionView.register(FavoriteSuplementaryView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "test")
-        
 
         rxSetupBindings()
     }
@@ -75,13 +75,24 @@ class FavoritesCVC: UIViewController, UICollectionViewDelegate, UICollectionView
             return cell
 
         }, configureSupplementaryView: { (ds, cv, kind, ip) in
-            let section = cv.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "test", for: ip) as! FavoriteSuplementaryView
-            return section
-            //return FavoriteSuplementaryView()
+//            let section = cv.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "test", for: ip) as! FavoriteSuplementaryView
+//            return section
+            return FavoriteSuplementaryView()
         })
         
         viewModel.items.asObservable()
             .bind(to: collectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        viewModel.items.asObservable()
+            .map { $0.isEmpty }
+            .subscribe (onNext: { [weak self] isEmpty in
+                if isEmpty {
+                    self?.collectionView.backgroundView?.isHidden = true
+                } else {
+                    self?.collectionView.backgroundView?.isHidden = false
+                }
+            })
             .disposed(by: disposeBag)
         
 //        viewModel.items.asObservable()
