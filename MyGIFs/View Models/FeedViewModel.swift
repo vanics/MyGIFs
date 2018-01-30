@@ -45,7 +45,7 @@ class FeedViewModel {
         onError = feedManager.error
         
         feedManager.gifs.asObservable()
-            .map { $0.map(FeedCellViewModel.init(model:))}
+            .map { $0.map(FeedCellViewModel.init(model:)) }
             .bind(to: modelItems)
             .disposed(by: disposeBag)
         

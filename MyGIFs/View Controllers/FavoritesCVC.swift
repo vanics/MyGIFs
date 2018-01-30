@@ -9,12 +9,14 @@
 import UIKit
 import CoreData
 import SwiftyGif
+import RxSwift
+import RxCocoa
 
 fileprivate enum Identifiers {
     static let FavoriteCVCell = "FavoriteCVCell"
 }
 
-class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, FluidLayoutDelegate {
+class FavoritesCVC: UIViewController, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, FluidLayoutDelegate {
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var fluidCollectionViewLayout: FluidCollectionViewLayout!
@@ -24,10 +26,11 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
     let gifManager = SwiftyGifManager(memoryLimit: GIF.memoryLimitInFavorites)
     let gifLevelOfIntegrity = GIF.levelOfIntegrityInFavorites
     
-    private var noItemsView = NoItemsView()
-    
     private var viewModel: FavoritesViewModel!
-    
+    private let disposeBag = DisposeBag()
+
+    private var noItemsView = NoItemsView()
+
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
@@ -35,52 +38,37 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
 
         viewModel = FavoritesViewModel()
         
+        collectionView.dataSource = nil // RxSwift will take care of that
         collectionView.delegate = self
-        collectionView.dataSource = self
+        collectionView.alwaysBounceVertical = true
+
         fluidCollectionViewLayout.delegate = self
                 
         noItemsView.textMessage = "You haven't added any favorite GIF yet."
 
-        collectionView.alwaysBounceVertical = true
-        
         // Register cell classes
         self.collectionView!.register(UINib(nibName: Identifiers.FavoriteCVCell, bundle: nil), forCellWithReuseIdentifier: Identifiers.FavoriteCVCell)
+        
+        rxSetupBindings()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         viewModel.loadData()
-        collectionView.reloadData()
     }
 
-    // MARK: - UICollectionViewDataSource
-
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+    // MARK: - RxSwift Binding
+    
+    private func rxSetupBindings() {
+        // MARK: - Data Source
+        viewModel.items.asObservable()
+            .bind(to: collectionView.rx.items(cellIdentifier: Identifiers.FavoriteCVCell, cellType: FavoriteCVCell.self)) { row, data, cell in
+                cell.setupCell(delegate: self, viewModel: data, gifLevelOfIntegrity: self.gifLevelOfIntegrity)
+            }
+            .disposed(by: disposeBag)
     }
-
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let numOfGifs = viewModel.numberOfRowsInSection(section)
-        
-        if numOfGifs > 0 {
-            collectionView.backgroundView = nil
-        } else {
-            collectionView.backgroundView = noItemsView
-        }
-        
-        return numOfGifs
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Identifiers.FavoriteCVCell, for: indexPath) as! FavoriteCVCell
-        
-        // Configure the cell
-        cell.setupCell(delegate: self, localGif: viewModel.cellForIndexPath(indexPath), gifLevelOfIntegrity: gifLevelOfIntegrity)
-        
-        return cell
-    }
-
+    
     // MARK: - FluidLayoutDelegate
     
     func collectionView(collectionView: UICollectionView, heightForCellAtIndexPath indexPath: IndexPath, width: CGFloat) -> CGFloat {
@@ -90,16 +78,6 @@ class FavoritesCVC: UIViewController, UICollectionViewDataSource, UICollectionVi
         
         return CGFloat(heightForCell)
     }
-
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using [segue destinationViewController].
-     // Pass the selected object to the new view controller.
-     }
-     */
 }
 
 // MARK: - FavoriteActionsDelegate
@@ -109,11 +87,8 @@ extension FavoritesCVC: FavoriteActionsDelegate {
     }
     
     func deleteFavorite(forCell cell: FavoriteCVCell) {
-        if let indexPath = collectionView.indexPath(for: cell),
-            viewModel.deleteFavorite(forCell: cell, at: indexPath) {
-            collectionView.performBatchUpdates({
-                collectionView.deleteItems(at: [indexPath])
-            })
+        if let indexPath = collectionView.indexPath(for: cell) {
+            viewModel.removeItemAt(indexPath)
         }
     }
 }

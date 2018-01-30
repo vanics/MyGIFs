@@ -7,49 +7,34 @@
 //
 
 import Foundation
+import RxSwift
 
 class FavoritesViewModel {
 
-    private(set) var gifs: [LocalGif] = []
-
-    // MARK: Outputs
-    var numberOfSections: Int = 0
-
+    let items: Observable<[FavoriteCellViewModel]>
+    
+    private let itemsVariable = Variable<[FavoriteCellViewModel]>([])
+    
+    init () {
+        items = itemsVariable.asObservable()
+    }
     
     func loadData() {
-        gifs = MyGifsCoreData.shared.fetchAll()
-    }
-    
-    func numberOfRowsInSection(_ section: Int) -> Int {
-        return gifs.count
-    }
-    
-    func cellForIndexPath(_ indexPath: IndexPath) -> LocalGif {
-        return gifs[indexPath.row]
+        itemsVariable.value = MyGifsCoreData.shared.fetchAll()
+            .map(FavoriteCellViewModel.init(model:))
     }
     
     func heightForCellAtIndexPath(_ indexPath: IndexPath, withAvailableWidth availableWidth: Float) -> Float {
-        let localGif = gifs[indexPath.row]
+        let cellViewModel = itemsVariable.value[indexPath.row]
         
-        let heightForCell = Calculation.heightForWidth(availableWidth, originalWidth: localGif.localImageWidth, originalHeight: localGif.localImageHeight)
+        let heightForCell = Calculation.heightForWidth(availableWidth, originalWidth: cellViewModel.width, originalHeight: cellViewModel.height)
         
         return heightForCell
     }
     
-    func deleteFavorite(forCell cell: FavoriteCVCell, at indexPath: IndexPath)  -> Bool {
-        guard let object = cell.localGif,
-            let localImageFileName = object.localImageFileName else {
-                return false
+    func removeItemAt(_ indexPath: IndexPath) {
+        if itemsVariable.value[indexPath.item].deleteFavorite() {
+            itemsVariable.value.remove(at: indexPath.item)
         }
-        
-        if MyGifsCoreData.shared.deleteByObject(object) {
-            _ = PersistGif.shared.removeImage(fileName: "\(localImageFileName)")
-        }
-        
-        gifs.remove(at: indexPath.row)
-
-        return true
     }
-
-
 }
