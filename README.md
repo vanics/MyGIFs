@@ -24,7 +24,7 @@ Search, save and share your favourites GIFs.
 * CocoaPods
 
 ## Developer Notes
-I starting developing this project using the MVC architecture with the idea to change to MVVM + RxSwift. This way, some architectural changes would be highlighted to myself and to who may concern.  The final branch is the master branch, the other branches may lack of some refactoring. The MVC branch has a more smoother infinite scrolling tho. I might improve the scrolling in the master later using RxDataSources  to be able to make partial changes to the tableView without the mini jump when pulling more data.
+I started developing this project using the MVC architecture with the idea to change to MVVM + RxSwift. This way, some architectural changes would be highlighted to myself and to who may concern.  The final branch is the master branch, the other branches may lack of some refactoring. The MVC branch has a more smoother infinite scrolling tho. I might improve the scrolling in the master later using RxDataSources  to be able to make partial changes to the tableView without the mini jump when pulling more data.
 
 ### Branchs
 (1) In the master branch we have the MVVM + RxSwift + More Refactorings.
