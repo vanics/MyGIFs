@@ -25,7 +25,7 @@ struct Gif: Mappable {
     var title: String?
     var caption: String?
 
-    var fixedWidth: GifSize?
+    var fixedWidth: GifSize!
     var original: GifSize?
     var downsizedLarge: GifSize?
     var isFavorite: Bool = false
@@ -38,8 +38,8 @@ struct Gif: Mappable {
             return nil
         }
         
-        if let id = map.JSON["id"] as? String {
-            isFavorite = MyGifsCoreData.shared.retrieveById(id)
+        if map.JSON["images"] == nil {
+            return nil
         }
     }
     
@@ -58,13 +58,5 @@ struct Gif: Mappable {
         fixedWidth <- map["images.fixed_width"]
         original <- map["images.original"]
         downsizedLarge <- map["images.downsized_large"]
-    }
-    
-    func isSaved() -> Bool {
-        guard let id = id else {
-            return false
-        }
-        
-        return MyGifsCoreData.shared.retrieveById(id)
     }
 }

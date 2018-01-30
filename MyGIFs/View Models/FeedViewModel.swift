@@ -23,8 +23,8 @@ class FeedViewModel {
     
     let isEmpty: Observable<Bool>
     let onError: Observable<String>
-    var items: Observable<[Gif]>
-    
+    let items: Observable<[FeedCellViewModel]>
+
     private var largeGifSelectionIndexPath: IndexPath?
     private let defaultHeight: Float = 150
     
@@ -40,13 +40,15 @@ class FeedViewModel {
         isEmpty = feedManager.isEmpty.asObservable()
         onError = feedManager.error
         
-        items = feedManager.gifs.asObservable().map{ $0 }
         
+        items = feedManager.gifs.asObservable()
+            .map { $0.map(FeedCellViewModel.init(model:))}
+        
+        // TODO: Binding will also send the value triggering an unnecessary
+        // retrieve, fix this later
         searchQuery.asObservable()
             .bind(to: feedManager.query)
             .disposed(by: disposeBag)
-        // TODO: Binding will also send the value triggering an unnecessary
-        // retrieve, fix this later
     }
     
     func retrieveFeed() {

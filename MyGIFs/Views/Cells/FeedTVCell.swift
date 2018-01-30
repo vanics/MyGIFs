@@ -11,8 +11,6 @@ import Kingfisher
 import RxSwift
 
 protocol FeedActionsDelegate: class {
-    func addFavorite(item: Gif, imageData: Data)
-    func removeFavorite(item: Gif)
     func share(imageData: Data)
 }
 
@@ -21,28 +19,26 @@ class FeedTVCell: UITableViewCell {
     @IBOutlet private weak var gifImageView: UIImageView!
     @IBOutlet private weak var favoriteBtn: UIButton!
     
-    private var isFavorite: Bool! // TODO: Remove it.
-
     var disposeBag = DisposeBag()
     
     // MARK: - Public Interface
-    func setupCell(delegate: FeedActionsDelegate, gif: Gif) {
+    func setupCell(delegate: FeedActionsDelegate, viewModel: FeedCellViewModel) {
         self.feedActionsDelegate = delegate
-        self.gif = gif
+        self.viewModel = viewModel
     }
     
     // MARK: - Attributes
     private weak var feedActionsDelegate: FeedActionsDelegate?
 
-    private var gif: Gif? {
+    private var viewModel: FeedCellViewModel? {
         didSet {
-            backgroundColor = UIColor.randomFlat
-
-            if let imageUrl = gif?.fixedWidth?.url {
-                gifImageView?.kf.setImage(with: URL(string: imageUrl))
-                isFavorite = gif?.isSaved()
-                setFavoriteBtn(isFavorite)
+            guard let viewModel = viewModel else {
+                return
             }
+            
+            backgroundColor = UIColor.randomFlat
+            gifImageView?.kf.setImage(with: URL(string: viewModel.imageUrl))
+            bindFavoriteBtn(viewModel.isFavorite)
         }
     }
     
@@ -68,40 +64,41 @@ class FeedTVCell: UITableViewCell {
         gifImageView?.image = nil
     }
     
-    private func setFavoriteBtn(_ isFavorite: Bool) {
-        let imageName = (isFavorite) ? "FavoritesFillIcon" : "FavoritesIcon"
-        favoriteBtn.setImage(UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate), for: .normal)
-        favoriteBtn.imageView?.tintColor = .red
+    private func bindFavoriteBtn(_ isFavorite: Variable<Bool>) {
+        guard let viewModel = viewModel else { return }
+
+        isFavorite.asObservable()
+            .subscribe(onNext: { [weak self] isFavorite in
+                let imageName = (isFavorite) ? "FavoritesFillIcon" : "FavoritesIcon"
+                self?.favoriteBtn.setImage(UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate), for: .normal)
+                self?.favoriteBtn.imageView?.tintColor = .red
+
+            })
+            .disposed(by: disposeBag)
+        
+        favoriteBtn.rx.tap
+            .bind {
+                if let imageData = self.gifImageView.kf.base.image?.kf.gifRepresentation() {
+                    viewModel.favoriteImage(imageData: imageData)
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Actions
+
+    // Doesn't make sense not to use delegate here. We need the imageData
+    // and the imageData should be sent to the viewController for the share
+    // functionality. So, use FeedActionsDelegate.
+    
+    // We can also bind the button action using RxSwift as it was done with
+    // the favoriteBtn
+
     @IBAction private func shareBtnDidTouch(_ sender: UIButton) {
         guard let imageData = gifImageView.kf.base.image?.kf.gifRepresentation() else {
             return
         }
         
         feedActionsDelegate?.share(imageData: imageData)
-    }
-    
-    @IBAction private func favoriteBtnDidTouch(_ sender: UIButton) {
-
-        // TODO: Check if the image was loaded
-        guard let gif = gif,
-            let imageData = gifImageView.kf.base.image?.kf.gifRepresentation() else {
-            return
-        }
-
-        // TODO: Should retrieve that staticaly but model should be updated first
-        // For now, let's check on the Core Data again.
-        
-        setFavoriteBtn(!isFavorite)
-        
-        if !isFavorite {
-            feedActionsDelegate?.addFavorite(item: gif, imageData: imageData)
-        } else {
-            feedActionsDelegate?.removeFavorite(item: gif)
-        }
-        
-        isFavorite = !isFavorite
     }
 }

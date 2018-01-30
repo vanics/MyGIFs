@@ -87,8 +87,6 @@ class FeedManager {
             .subscribe { [weak self] (event) in
                 // This is in the main thread
                 self?.parseEventReturn(event: event)
-                self?.isLoading = false
-                self?.showLoading.value = false
             }
             .disposed(by: disposeBag)
     }
@@ -98,10 +96,7 @@ class FeedManager {
             .trending(limit: FeedManager.limit, offset: currentOffset))
             .mapJSON()
             .subscribe { [weak self] (event) in
-                // This is in the main thread
                 self?.parseEventReturn(event: event)
-                self?.isLoading = false
-                self?.showLoading.value = false
             }
             .disposed(by: disposeBag)
     }
@@ -118,6 +113,9 @@ class FeedManager {
                 let totalCount = paginationDict["total_count"] as? Int,
                 let gifs = Mapper<Gif>().mapArray(JSONObject: jsonData) {
                 
+                isLoading = false
+                showLoading.value = false
+
                 if count < FeedManager.limit {
                     noMoreItems = true
                 }
@@ -127,6 +125,7 @@ class FeedManager {
                 
                 self.gifs.value.append(contentsOf: gifs)
                 isEmpty.value = gifs.isEmpty // isEmpty by any chance?
+                
                 
             } else {
                 error.on(.next("Error parsing data"))

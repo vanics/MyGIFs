@@ -68,8 +68,8 @@ class FeedTVC: UITableViewController {
     func rxSetupBindings() {
 
         // MARK: - Data Source
-        viewModel.items.bind(to: tableView.rx.items(cellIdentifier: Identifiers.FeedTVCell, cellType: FeedTVCell.self)) { _, model, cell in
-            cell.setupCell(delegate: self, gif: model)
+        viewModel.items.asObservable().bind(to: tableView.rx.items(cellIdentifier: Identifiers.FeedTVCell, cellType: FeedTVCell.self)) { index, model, cell in
+                cell.setupCell(delegate: self, viewModel: model)
             }
             .disposed(by: disposeBag)
         
@@ -108,6 +108,7 @@ class FeedTVC: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.selectRowAtIndexPath(indexPath)
+        // TODO: Refactor this row should be updated automatically. Reactive, right?
         updateRowAt(indexPaths: viewModel.indexPathsForUpdate)
     }
     
@@ -144,21 +145,8 @@ class FeedTVC: UITableViewController {
 
 // MARK: - FeedActionsDelegate
 extension FeedTVC: FeedActionsDelegate {
-    func addFavorite(item: Gif, imageData: Data) {
-        if let imagePath = PersistGif.shared.storeLocalImage(name: item.id, imageData: imageData) {
-            MyGifsCoreData.shared.insertItem(item, imagePath: imagePath)
-        }
-    }
-    
     func share(imageData: Data) {
         shareGif(imageData: imageData)
-    }
-    
-    func removeFavorite(item: Gif) {
-        // TODO: Invert it
-        if MyGifsCoreData.shared.deleteById(item.id) {
-            _ = PersistGif.shared.removeImage(fileName: "\(item.id).gif")
-        }
     }
 }
 

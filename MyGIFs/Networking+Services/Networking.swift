@@ -11,7 +11,7 @@ import Moya
 import Result
 import Moya_ObjectMapper
 
-// MARK: - Provider Setup (Useful later for RxSwift Implementation)
+// MARK: - Provider Setup (Useful later for more than one Provider)
 
 struct Network {
     static private(set) var provider = MoyaProvider<GiphyAPI>(plugins: [NetworkLoggerPlugin(verbose: true, responseDataFormatter: JSONResponseDataFormatter)])
