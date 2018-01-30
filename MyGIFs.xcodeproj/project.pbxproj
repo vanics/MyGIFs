@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		202786E920207740006AC719 /* FavoriteSuplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202786E820207740006AC719 /* FavoriteSuplementaryView.swift */; };
+		202786EB2020CE60006AC719 /* FavoritySuplementaryView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 202786EA2020CE60006AC719 /* FavoritySuplementaryView.xib */; };
 		20323452201FD9BC00766C9E /* RxSwift+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20323451201FD9BC00766C9E /* RxSwift+Ext.swift */; };
 		2075272B201DA42C00B06EA6 /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2075272A201DA42C00B06EA6 /* Dynamic.swift */; };
 		2075272E201DA4B900B06EA6 /* BindingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2075272D201DA4B900B06EA6 /* BindingTextField.swift */; };
@@ -45,6 +47,8 @@
 /* Begin PBXFileReference section */
 		023ACF43081AB519686009A9 /* Pods-MyGIFs.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyGIFs.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyGIFs/Pods-MyGIFs.release.xcconfig"; sourceTree = "<group>"; };
 		11B653F22D826B0A59E977AA /* Pods-MyGIFs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyGIFs.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyGIFs/Pods-MyGIFs.debug.xcconfig"; sourceTree = "<group>"; };
+		202786E820207740006AC719 /* FavoriteSuplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSuplementaryView.swift; sourceTree = "<group>"; };
+		202786EA2020CE60006AC719 /* FavoritySuplementaryView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FavoritySuplementaryView.xib; sourceTree = "<group>"; };
 		20323451201FD9BC00766C9E /* RxSwift+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RxSwift+Ext.swift"; sourceTree = "<group>"; };
 		2075272A201DA42C00B06EA6 /* Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
 		2075272D201DA4B900B06EA6 /* BindingTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingTextField.swift; sourceTree = "<group>"; };
@@ -172,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				20F1EC14201BF79500C54341 /* NoItemsView.swift */,
+				202786E820207740006AC719 /* FavoriteSuplementaryView.swift */,
 				20F1EBEC201989C000C54341 /* Cells */,
 			);
 			path = Views;
@@ -244,6 +249,7 @@
 			children = (
 				20F1EBFC201A3EC000C54341 /* FeedTVCell.swift */,
 				20F1EC0A201AFD9E00C54341 /* FavoriteCVCell.swift */,
+				202786EA2020CE60006AC719 /* FavoritySuplementaryView.xib */,
 				20F1EC0C201B081600C54341 /* FavoriteCVCell.xib */,
 			);
 			path = Cells;
@@ -335,6 +341,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				202786EB2020CE60006AC719 /* FavoritySuplementaryView.xib in Resources */,
 				20F1EBD32019458D00C54341 /* LaunchScreen.storyboard in Resources */,
 				20F1EBD02019458D00C54341 /* Assets.xcassets in Resources */,
 				20F1EC0D201B081600C54341 /* FavoriteCVCell.xib in Resources */,
@@ -428,6 +435,7 @@
 				2075272E201DA4B900B06EA6 /* BindingTextField.swift in Sources */,
 				20F1EC07201AD77B00C54341 /* FavoritesViewModel.swift in Sources */,
 				2084450F201C516400D1BF74 /* FluidCollectionViewLayout.swift in Sources */,
+				202786E920207740006AC719 /* FavoriteSuplementaryView.swift in Sources */,
 				20F1EBFD201A3EC000C54341 /* FeedTVCell.swift in Sources */,
 				20F1EC15201BF79500C54341 /* NoItemsView.swift in Sources */,
 				20323452201FD9BC00766C9E /* RxSwift+Ext.swift in Sources */,

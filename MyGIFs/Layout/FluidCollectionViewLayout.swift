@@ -54,6 +54,13 @@ public class FluidCollectionViewLayout: UICollectionViewLayout {
     override public func prepare() {
         guard let collectionView = collectionView else { return }
         
+        guard collectionView.numberOfSections > 0 else {
+            //let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath as IndexPath)
+
+            
+            return
+        }
+        
         // Is there any spacing between them?
         let totalSpaceWidth = contentWidth - CGFloat(numberOfColumns) * cellWidth
         let horizontalPadding = totalSpaceWidth / CGFloat(numberOfColumns + 1)
@@ -119,6 +126,13 @@ public class FluidCollectionViewLayout: UICollectionViewLayout {
                 layoutAttributes.append(attributes)
             }
         }
+        
+        if layoutAttributes.isEmpty {
+            let frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+            let insetFrame = frame.insetBy(dx: 0, dy: 0)
+
+        }
+        
         return layoutAttributes
     }
 }

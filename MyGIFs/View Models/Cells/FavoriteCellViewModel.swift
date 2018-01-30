@@ -7,8 +7,13 @@
 //
 
 import Foundation
+import RxDataSources
 
-struct FavoriteCellViewModel {
+struct FavoriteCellViewModel: IdentifiableType, Equatable {
+    var identity: String {
+        return id
+    }
+    
     var id: String
     var localImageFileName: String
     var url: String
@@ -38,5 +43,9 @@ struct FavoriteCellViewModel {
             return true
         }
         return false
+    }
+    
+    static func ==(lhs: FavoriteCellViewModel, rhs: FavoriteCellViewModel) -> Bool {
+        return lhs.identity == rhs.identity
     }
 }

@@ -9,7 +9,7 @@
 import UIKit
 import RxCocoa
 import RxSwift
-//import RxDataSources
+import RxDataSources
 import ObjectMapper
 import Kingfisher
 
@@ -31,7 +31,7 @@ class FeedTVC: UITableViewController {
     lazy var viewModel: FeedViewModel = FeedViewModel()
     
     // MARK: - Some UI Setup
-
+    
     private lazy var messageView: NoItemsView = {
         let noItems = NoItemsView()
         noItems.textMessage = "No items found for the entered parameter."
@@ -72,6 +72,7 @@ class FeedTVC: UITableViewController {
     func rxSetupBindings() {
 
         // MARK: - Data Source
+        
         viewModel.items.asObservable().bind(to: tableView.rx.items(cellIdentifier: Identifiers.FeedTVCell, cellType: FeedTVCell.self)) { index, model, cell in
                 cell.setupCell(delegate: self, viewModel: model)
             }
@@ -136,7 +137,9 @@ class FeedTVC: UITableViewController {
     
     // MARK: - Release Keyboard if user interact with scrollView
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        searchController.searchBar.resignFirstResponder()
+        if searchController.searchBar.isFirstResponder {
+            searchController.searchBar.resignFirstResponder()
+        }
     }
     
     // MARK: - Util

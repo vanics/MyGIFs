@@ -8,15 +8,24 @@
 
 import Foundation
 import RxSwift
+import RxDataSources
 
 class FavoritesViewModel {
+    typealias Section = AnimatableSectionModel<Int, FavoriteCellViewModel>
 
-    let items: Observable<[FavoriteCellViewModel]>
-    
+    let items: Observable<[Section]>
     private let itemsVariable = Variable<[FavoriteCellViewModel]>([])
-    
+//    private let disposeBag = DisposeBag()
+
     init () {
-        items = itemsVariable.asObservable()
+        items = itemsVariable.asObservable().map { [Section(model: 0, items: $0)] }
+
+//        itemsVariable.asObservable()
+//            .map { Section(model: 0, items: $0) }
+//            .subscribe(onNext: { [weak self] item in
+//                self?.items.value = [item]
+//            })
+//        .disposed(by: disposeBag)
     }
     
     func loadData() {
