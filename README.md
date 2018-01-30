@@ -39,7 +39,7 @@ I can refactor this later. But at that point, I was a bit worried with the time 
 
 ## Screenshots
 <img src="Screenshots/ss00.gif?raw=true" width="280" height="500">  <img src="Screenshots/ss01.png?raw=true" width="281" height="500">  <img src="Screenshots/ss02.png?raw=true" width="281" height="542">
-<img src="Screenshots/ss03.png?raw=true" width="281" height="542">  <img src="Screenshots/ss04.png?raw=true" width="281" height="542">
+<img src="Screenshots/ss03.png?raw=true" width="281" height="542">  <img src="Screenshots/ss04.png?raw=true" width="281" height="500">
 
 
 ## Possible Improvements / Features
