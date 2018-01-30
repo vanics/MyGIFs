@@ -15,6 +15,11 @@ class FeedViewModel {
     private var feedManager: FeedManager
     private let disposeBag = DisposeBag()
 
+    private var largeGifSelectionIndexPath: IndexPath?
+    private let defaultHeight: Float = 150
+    
+    private var isFirstTimeViewAppear = true
+    
     // MARK: - Attributes / Output
     
     /// showLoading is true always when the data source (items) was
@@ -25,8 +30,7 @@ class FeedViewModel {
     let onError: Observable<String>
     let items: Observable<[FeedCellViewModel]>
 
-    private var largeGifSelectionIndexPath: IndexPath?
-    private let defaultHeight: Float = 150
+    let modelItems = Variable<[FeedCellViewModel]>([])
     
     /// Setting Search Query will also trigger data loading
     var searchQuery = Variable<String>("")
@@ -40,9 +44,12 @@ class FeedViewModel {
         isEmpty = feedManager.isEmpty.asObservable()
         onError = feedManager.error
         
-        
-        items = feedManager.gifs.asObservable()
+        feedManager.gifs.asObservable()
             .map { $0.map(FeedCellViewModel.init(model:))}
+            .bind(to: modelItems)
+            .disposed(by: disposeBag)
+        
+        items = modelItems.asObservable()
         
         // TODO: Binding will also send the value triggering an unnecessary
         // retrieve, fix this later
@@ -51,8 +58,23 @@ class FeedViewModel {
             .disposed(by: disposeBag)
     }
     
+    // MARK: - Public Interface
+    
     func retrieveFeed() {
         feedManager.retrieveGifs()
+    }
+    
+    func viewWillAppear() {
+        guard !isFirstTimeViewAppear else {
+            isFirstTimeViewAppear = false
+            return
+        }
+        
+        // Synchronize data from CoreData since it might
+        // changed on other screens
+        for item in modelItems.value {
+            item.syncData()
+        }
     }
     
     func heightForRowAtIndexPath(_ indexPath: IndexPath, withAvailableWidth availableWidth: Float) -> Float {
@@ -68,14 +90,6 @@ class FeedViewModel {
         } else {
             return defaultHeight
         }
-    }
-    
-    private func computeCellHeightForWidth(_ targetWidth: Float, originalWidth: Float, originalHeight: Float) -> Float {
-        return Calculation.heightForWidth(
-            targetWidth,
-            originalWidth: originalWidth,
-            originalHeight: originalHeight
-        )
     }
     
     var indexPathsForUpdate = [IndexPath]()
@@ -94,5 +108,15 @@ class FeedViewModel {
         } else {
             largeGifSelectionIndexPath = indexPath
         }
+    }
+    
+    // MARK: - Private
+    
+    private func computeCellHeightForWidth(_ targetWidth: Float, originalWidth: Float, originalHeight: Float) -> Float {
+        return Calculation.heightForWidth(
+            targetWidth,
+            originalWidth: originalWidth,
+            originalHeight: originalHeight
+        )
     }
 }

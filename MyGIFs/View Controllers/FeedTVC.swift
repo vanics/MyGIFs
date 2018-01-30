@@ -63,6 +63,10 @@ class FeedTVC: UITableViewController {
         viewModel.retrieveFeed()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        viewModel.viewWillAppear()
+    }
+    
     // MARK: - RxSwift Setup
     
     func rxSetupBindings() {

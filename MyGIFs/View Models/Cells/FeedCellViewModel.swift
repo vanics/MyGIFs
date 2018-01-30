@@ -44,7 +44,14 @@ struct FeedCellViewModel {
 
     }
     
+    // Force isFavorite update
+    // Usually in the case the screen was reloaded
+    func syncData() {
+        isFavorite.value = MyGifsCoreData.shared.retrieveById(id)
+    }
+    
     // MARK: - Private
+    
     private func addToFavorites(imageData: Data) {
         if let imagePath = PersistGif.shared.storeLocalImage(name: id, imageData: imageData) {
             MyGifsCoreData.shared.insertItem(originalModel, imagePath: imagePath)
