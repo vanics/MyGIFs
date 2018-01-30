@@ -1,6 +1,13 @@
 # MyGIFs
 Search, save and share your favourites GIFs.
 
+## Features
+- See Trending GIFs
+- Search GIFs
+- Infinite Scrolling
+- Favorite GIFs saving them in your device
+- Share GIFs
+
 ## Architecture and Libraries
 * MVVM
 * RxSwift
@@ -10,13 +17,6 @@ Search, save and share your favourites GIFs.
 * Kingfisher
 * SwiftyGif
 
-## Features
-- See Trending GIFs
-- Search GIFs
-- Infinite Scrolling
-- Favorite GIFs saving them in your device
-- Share GIFs
-
 ## Requirements
 * iOS 10+
 * Xcode 9.0+
@@ -24,9 +24,9 @@ Search, save and share your favourites GIFs.
 * CocoaPods
 
 ## Developer Notes
+I starting developing this project using the MVC architecture with the idea to change to MVVM + RxSwift. This way, some architectural changes would be highlighted to myself and to who may concern.  The final branch is the master branch, the other branches may lack of some refactoring. The MVC branch has a more smoother infinite scrolling tho. I might improve the scrolling in the master later using RxDataSources  to be able to make partial changes to the tableView without the mini jump when pulling more data.
 
-
-## Branchs
+### Branchs
 (1) In the master branch we have the MVVM + RxSwift + More Refactorings.
 
 (2) In the MVC branch, we have the MVC version as the name states. Notice that it has more code than the other branches, because it's using Protocol/Delegates pattern, callback/closures, and handling the tableView and collectionView DataSource and Delegates.
@@ -38,11 +38,8 @@ I can refactor this later. But at that point, I was a bit worried with the time 
 
 
 ## Screenshots
-<img src="Screenshots/ss00.gif?raw=true" width="280" height="500">
-<img src="Screenshots/ss01.png?raw=true" width="281" height="500">
-<img src="Screenshots/ss02.png?raw=true" width="281" height="542">
-<img src="Screenshots/ss03.png?raw=true" width="281" height="542">
-<img src="Screenshots/ss04.png?raw=true" width="281" height="542">
+<img src="Screenshots/ss00.gif?raw=true" width="280" height="500">  <img src="Screenshots/ss01.png?raw=true" width="281" height="500">  <img src="Screenshots/ss02.png?raw=true" width="281" height="542">
+<img src="Screenshots/ss03.png?raw=true" width="281" height="542">  <img src="Screenshots/ss04.png?raw=true" width="281" height="542">
 
 
 ## Possible Improvements / Features
@@ -64,6 +61,7 @@ I can refactor this later. But at that point, I was a bit worried with the time 
 - Show loading on screen bottom if it’s taking too long to dynamically load (by the infinite scrolling)
 - Handle network retry/reachability
 - Test other solution with more fluid scrolling
+- Use lower resolution GIFs? Test.
 - Implement rxSwift throttle to prevent too many requests to the API
 - Accessibility?
 - Test in all devices
