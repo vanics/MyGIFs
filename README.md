@@ -24,7 +24,12 @@ Search, save and share your favourites GIFs.
 * CocoaPods
 
 ## Developer Notes
-I started developing this project using the MVC architecture with the idea to change to MVVM + RxSwift. This way, some architectural changes would be highlighted to myself and to who may concern.  The final branch is the master branch, the other branches may lack of some refactoring. The MVC branch has a more smoother infinite scrolling tho. I might improve the scrolling in the master later using RxDataSources  to be able to make partial changes to the tableView without the mini jump when pulling more data.
+I started developing this project using the MVC architecture with the idea to change to MVVM + RxSwift. This way, some architectural changes would be highlighted to myself and to who may concern. The master branch has some more refactorings, but doesn't have a smoother cell deletion or inclusion. 
+
+Practically, the user experience in the MVC branch is better but the code/implementation/architecture is better on the master branch. 
+
+The MVC branch has a smoother infinite scrolling and cell deletion for favorites. 
+I might improve the scrolling and cell deletion in the master later using RxDataSources to be able to make partial changes to the tableView without the mini jump when pulling more data or removing it. But this would take more of my time because RxDataSources is conflicting with my CustomViewFlowLayout implementation and I need to do some more refactoring.
 
 ### Branchs
 (1) In the master branch we have the MVVM + RxSwift + More Refactorings.
@@ -38,8 +43,8 @@ I can refactor this later. But at that point, I was a bit worried with the time 
 
 
 ## Screenshots
-<img src="Screenshots/ss00.gif?raw=true" width="280" height="500">  <img src="Screenshots/ss01.png?raw=true" width="281" height="500">  <img src="Screenshots/ss02.png?raw=true" width="281" height="542">
-<img src="Screenshots/ss03.png?raw=true" width="281" height="542">  <img src="Screenshots/ss04.png?raw=true" width="281" height="500">
+<img src="Screenshots/ss00.gif?raw=true" width="280" height="500">  <img src="Screenshots/ss01.png?raw=true" width="281" height="500">  <img src="Screenshots/ss02.png?raw=true" width="281" height="500">
+<img src="Screenshots/ss03.png?raw=true" width="281" height="500">  <img src="Screenshots/ss04.png?raw=true" width="281" height="500">
 
 
 ## Possible Improvements / Features
